@@ -26,7 +26,8 @@ const categories = [
   {
     id: 'Theater',
     children: [
-      { id: 'Movies', icon: <PeopleIcon />, path: '/movie' },
+      { id: 'Genres', icon: <PeopleIcon />, path: '/genres' },
+      { id: 'Movies', icon: <PeopleIcon />, path: '/movies' },
       { id: 'Rooms', icon: <DnsRoundedIcon />, path: '/test' },
     ],
   },
