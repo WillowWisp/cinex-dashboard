@@ -1,10 +1,10 @@
 import React, { useState, FunctionComponent } from 'react';
 
 // Misc
-import * as genreAPI from '../../../../api/genreAPI';
+import * as screenTypeAPI from '../../../../api/screenTypeAPI';
 
 // Interface
-import { Genre, GenreInput } from '../../../../interfaces/genre';
+import { ScreenType, ScreenTypeInput } from '../../../../interfaces/screenType';
 
 // Component
 import Button from '@material-ui/core/Button';
@@ -16,22 +16,22 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 
-interface IDialogAddOrEditGenreProps {
-  genreToEdit: Genre | null, // null: DialogAdd. not null: DialogEdit
+interface IDialogAddOrEditScreenTypeProps {
+  screenTypeToEdit: ScreenType | null, // null: DialogAdd. not null: DialogEdit
   isOpen: boolean,
   onClose: Function, // Call this to close Dialog
   onSave: Function, // Call this to close Dialog & refresh table
 }
 
-const DialogAddOrEditGenre: FunctionComponent<IDialogAddOrEditGenreProps> = (props) => {
-  const [genreInput, setGenreInput] = useState<GenreInput>({ name: '' });
+const DialogAddOrEditScreenType: FunctionComponent<IDialogAddOrEditScreenTypeProps> = (props) => {
+  const [screenTypeInput, setScreenTypeInput] = useState<ScreenTypeInput>({ name: '' });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
 
   const onDialogEnter = () => {
-    if (!props.genreToEdit) {
-      setGenreInput({ name: '' });
+    if (!props.screenTypeToEdit) {
+      setScreenTypeInput({ name: '' });
     } else {
-      setGenreInput({ name: props.genreToEdit.name });
+      setScreenTypeInput({ name: props.screenTypeToEdit.name });
     }
   }
 
@@ -41,9 +41,9 @@ const DialogAddOrEditGenre: FunctionComponent<IDialogAddOrEditGenreProps> = (pro
 
   const onDialogSave = () => {
     setIsLoadingSave(true);
-    if (!props.genreToEdit) {
-      // Add Genre
-      genreAPI.addGenre(genreInput)
+    if (!props.screenTypeToEdit) {
+      // Add ScreenType
+      screenTypeAPI.addScreenType(screenTypeInput)
         .then(response => {
           setIsLoadingSave(false);
           console.log(response);
@@ -54,15 +54,23 @@ const DialogAddOrEditGenre: FunctionComponent<IDialogAddOrEditGenreProps> = (pro
           console.log(err);
         })
     } else {
-      // Update Genre
-      setIsLoadingSave(false);
-      props.onSave();
+      // Update ScreenType
+      screenTypeAPI.updateScreenType(props.screenTypeToEdit.id, screenTypeInput)
+        .then(response => {
+          setIsLoadingSave(false);
+          console.log(response);
+          props.onSave();
+        })
+        .catch(err => {
+          setIsLoadingSave(false);
+          console.log(err);
+        })
     }
   }
 
   return (
     <Dialog open={props.isOpen} onEnter={() => onDialogEnter()} onClose={() => onDialogClose()}>
-      <DialogTitle id="form-dialog-title">{!props.genreToEdit ? `Add Genre` : `Edit Genre: ${props.genreToEdit.name}`}</DialogTitle>
+      <DialogTitle id="form-dialog-title">{!props.screenTypeToEdit ? `Add ScreenType` : `Edit ScreenType: ${props.screenTypeToEdit.name}`}</DialogTitle>
       <DialogContent dividers>
         <DialogContentText>
           Please fill those fields below to continue.
@@ -70,15 +78,15 @@ const DialogAddOrEditGenre: FunctionComponent<IDialogAddOrEditGenreProps> = (pro
         <TextField
           required
           id="outlined-full-width"
-          label="Genre name"
+          label="ScreenType name"
           style={{ margin: 8 }}
           placeholder="Sci-Fi"
           fullWidth
           margin="normal"
           InputLabelProps={{ shrink: true, }}
           variant="outlined"
-          value={genreInput.name}
-          onChange={(event) => {setGenreInput({...genreInput, name: event.target.value })}}
+          value={screenTypeInput.name}
+          onChange={(event) => {setScreenTypeInput({...screenTypeInput, name: event.target.value })}}
         />
       </DialogContent>
       <DialogActions>
@@ -97,4 +105,4 @@ const DialogAddOrEditGenre: FunctionComponent<IDialogAddOrEditGenreProps> = (pro
   );
 }
 
-export default DialogAddOrEditGenre;
+export default DialogAddOrEditScreenType;

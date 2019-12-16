@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 
 import {
   createMuiTheme,
@@ -171,7 +171,7 @@ const styles = createStyles({
 
 export interface LayoutProps extends WithStyles<typeof styles> {}
 
-function Layout(props: LayoutProps) {
+const Layout: FunctionComponent<LayoutProps> = (props) => {
   const { classes } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
 

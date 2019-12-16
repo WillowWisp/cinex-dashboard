@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 
@@ -42,7 +42,7 @@ interface HeaderProps extends WithStyles<typeof styles> {
   onDrawerToggle: () => void;
 }
 
-function Header(props: HeaderProps) {
+const Header: FunctionComponent<HeaderProps> = (props) => {
   const { classes, onDrawerToggle } = props;
 
   return (

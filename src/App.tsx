@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 import Layout from './layout/Layout';
 
 import './App.css';
+import './styles/global.scss';
 
 axios.defaults.baseURL = 'https://cinex.herokuapp.com';
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { FunctionComponent } from 'react';
 
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import { Omit } from '@material-ui/types';
@@ -12,23 +12,27 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import HomeIcon from '@material-ui/icons/Home';
-import PeopleIcon from '@material-ui/icons/People';
-import DnsRoundedIcon from '@material-ui/icons/DnsRounded';
+import IconAspectRatio from '@material-ui/icons/AspectRatio';
+import IconList from '@material-ui/icons/List';
+import IconMeetingRoom from '@material-ui/icons/MeetingRoom';
+import IconMovie from '@material-ui/icons/Movie';
+import IconPeople from '@material-ui/icons/People';
 import SettingsIcon from '@material-ui/icons/Settings';
 
 const categories = [
   {
     id: 'Dashboard',
     children: [
-      { id: 'Home', icon: <PeopleIcon />, path: '/' },
+      { id: 'Home', icon: <IconPeople />, path: '/' },
     ],
   },
   {
     id: 'Theater',
     children: [
-      { id: 'Genres', icon: <PeopleIcon />, path: '/genres' },
-      { id: 'Movies', icon: <PeopleIcon />, path: '/movies' },
-      { id: 'Rooms', icon: <DnsRoundedIcon />, path: '/test' },
+      { id: 'Genres', icon: <IconList />, path: '/genres' },
+      { id: 'Screen Types', icon: <IconAspectRatio />, path: '/screen-types' },
+      { id: 'Movies', icon: <IconMovie />, path: '/movies' },
+      { id: 'Rooms', icon: <IconMeetingRoom />, path: '/test' },
     ],
   },
   {
@@ -83,7 +87,7 @@ const styles = (theme: Theme) =>
 
 export interface NavigatorProps extends Omit<DrawerProps, 'classes'>, WithStyles<typeof styles> {}
 
-function Navigator(props: NavigatorProps) {
+const Navigator: FunctionComponent<NavigatorProps> = (props) => {
   const { classes, ...other } = props;
 
   return (
