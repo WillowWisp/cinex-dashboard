@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, FunctionComponent } from 'react';
 
 // Misc
 import * as genreAPI from '../../../api/genreAPI';
@@ -17,11 +17,11 @@ import DialogAddOrEditGenre from './components/DialogAddOrEditGenre';
 // Class
 // import classes from './PageGenres.module.scss';
 
-function PageGenres() {
+const PageGenres: FunctionComponent = () => {
   const [genres, setGenres] = useState<Array<Genre>>([]);
   const [genreToEdit, setGenreToEdit] = useState<Genre | null>(null);
   const [isTableLoading, setIsTableLoading] = useState(false);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isDialogAddOrEditOpen, setIsDialogAddOrEditOpen] = useState(false);
   
   const columns: Array<Column<Genre>> = [
     { title: 'Id', field: 'id', editable: 'never', cellStyle: {width: '300px'} },
@@ -46,12 +46,12 @@ function PageGenres() {
   }
 
   const onAddClick = () => {
-    setIsAddDialogOpen(true);
+    setIsDialogAddOrEditOpen(true);
   }
 
   const onUpdateClick = (event: any, genre: any) => {
     setGenreToEdit(genre);
-    setIsAddDialogOpen(true);
+    setIsDialogAddOrEditOpen(true);
   }
   
   const onDeleteClick = (event: any, genre: Genre | Genre[]) => {
@@ -94,9 +94,9 @@ function PageGenres() {
 
       <DialogAddOrEditGenre
         genreToEdit={genreToEdit}
-        isOpen={isAddDialogOpen}
+        isOpen={isDialogAddOrEditOpen}
         onClose={() => {
-          setIsAddDialogOpen(false);
+          setIsDialogAddOrEditOpen(false);
 
           // setTimeout temp fix: transition (animation) doesn't catch up on setGenreToEdit(null)
           // TODO: Fix this
@@ -105,7 +105,7 @@ function PageGenres() {
           }, 150);
         }}
         onSave={() => {
-          setIsAddDialogOpen(false);
+          setIsDialogAddOrEditOpen(false);
 
           // setTimeout temp fix: transition (animation) doesn't catch up on setGenreToEdit(null)
           // TODO: Fix this
