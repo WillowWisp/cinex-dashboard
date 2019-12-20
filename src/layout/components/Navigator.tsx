@@ -18,6 +18,7 @@ import IconMeetingRoom from '@material-ui/icons/MeetingRoom';
 import IconMovie from '@material-ui/icons/Movie';
 import IconPeople from '@material-ui/icons/People';
 import SettingsIcon from '@material-ui/icons/Settings';
+import IconRate from '@material-ui/icons/PregnantWoman';
 
 const categories = [
   {
@@ -31,6 +32,7 @@ const categories = [
     children: [
       { id: 'Genres', icon: <IconList />, path: '/genres' },
       { id: 'Screen Types', icon: <IconAspectRatio />, path: '/screen-types' },
+      { id: 'Rates', icon: <IconRate />, path: '/rates' },
       { id: 'Movies', icon: <IconMovie />, path: '/movies' },
       { id: 'Rooms', icon: <IconMeetingRoom />, path: '/test' },
     ],
