@@ -1,9 +1,11 @@
 import React, { useEffect, useState, FunctionComponent } from 'react';
 
 // Misc
+import * as roomAPI from '../../../api/roomAPI';
 import * as screenTypeAPI from '../../../api/screenTypeAPI';
 
 // Interface
+import { Room } from '../../../interfaces/room';
 import { ScreenType } from '../../../interfaces/screenType';
 
 // Component
@@ -12,41 +14,63 @@ import Button from '@material-ui/core/Button';
 import MaterialTable, { Column, MTableAction } from 'material-table';
 
 // Custom Component
-import DialogAddOrEditScreenType from './components/DialogAddOrEditScreenType';
+import DialogAddOrEditRoom from './components/DialogAddOrEditRoom';
 import DialogYesNo from '../../../components/DialogYesNo';
 
 // Class
-// import classes from './PageScreenTypes.module.scss';
+// import classes from './PageRooms.module.scss';
 
-const PageScreenTypes: FunctionComponent = () => {
-  const [screenTypes, setScreenTypes] = useState<Array<ScreenType>>([]);
+const PageRooms: FunctionComponent = () => {
+  const [rooms, setRooms] = useState<Array<Room>>([]);
+  const [screenTypeList, setScreenTypeList] = useState<Array<ScreenType>>([]); // Naming convention: use abcList for non-primary array 
   const [isTableLoading, setIsTableLoading] = useState(false);
   // Add or edit Dialog
   const [isDialogAddOrEditOpen, setIsDialogAddOrEditOpen] = useState(false);
-  const [screenTypeToEdit, setScreenTypeToEdit] = useState<ScreenType | null>(null);
+  const [roomToEdit, setRoomToEdit] = useState<Room | null>(null);
   // Delete Dialog
-  const [screenTypeIdToDelete, setScreenTypeIdToDelete] = useState(''); // TODO: Find out if we need to make this a state
+  const [roomIdToDelete, setRoomIdToDelete] = useState(''); // TODO: Find out if we need to make this a state
   const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState(false);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
   
-  const columns: Array<Column<ScreenType>> = [
+  const columns: Array<Column<Room>> = [
     { title: 'Id', field: 'id', editable: 'never', cellStyle: {width: '300px'} },
     { title: 'Name', field: 'name' },
+    {
+      title: 'Screen types',
+      field: 'screenTypes',
+      render: (rowData) => {
+        const screenTypesDisplay = rowData.screenTypes.map(screenType => screenType.name).join(', ');
+        return (<span>{screenTypesDisplay}</span>)
+      }
+    },
+    { title: 'Seats per row', field: 'totalSeatsPerRow', cellStyle: {width: '200px'} },
+    { title: 'Total rows', field: 'totalRows', cellStyle: {width: '200px'} },
   ]
 
   useEffect(() => {
-    getAllScreenTypes();
+    getAllRooms();
+    getScreenTypeList();
   }, []);
 
-  const getAllScreenTypes = () => {
+  const getAllRooms = () => {
     setIsTableLoading(true);
-    screenTypeAPI.getAllScreenTypes()
+    roomAPI.getAllRooms()
       .then(response => {
         setIsTableLoading(false);
-        setScreenTypes(response.data);
+        setRooms(response.data);
       })
       .catch(err => {
         setIsTableLoading(false);
+        console.log(err);
+      })
+  }
+
+  const getScreenTypeList = () => {
+    screenTypeAPI.getAllScreenTypes()
+      .then(response => {
+        setScreenTypeList(response.data);
+      })
+      .catch(err => {
         console.log(err);
       })
   }
@@ -55,23 +79,23 @@ const PageScreenTypes: FunctionComponent = () => {
     setIsDialogAddOrEditOpen(true);
   }
 
-  const onUpdateClick = (event: any, screenType: any) => {
-    setScreenTypeToEdit(screenType);
+  const onUpdateClick = (event: any, room: any) => {
+    setRoomToEdit(room);
     setIsDialogAddOrEditOpen(true);
   }
   
-  const onDeleteClick = (event: any, screenType: any) => {
-    setScreenTypeIdToDelete(screenType.id);
+  const onDeleteClick = (event: any, room: any) => {
+    setRoomIdToDelete(room.id);
     setIsDialogDeleteOpen(true);
   }
 
-  const deleteScreenType = (id: string) => {
+  const deleteRoom = (id: string) => {
     setIsLoadingDelete(true);
-    screenTypeAPI.deleteScreenType(id)
+    roomAPI.deleteRoom(id)
       .then((response) => {
         setIsLoadingDelete(false);
         closeDialogDelete();
-        getAllScreenTypes();
+        getAllRooms();
       })
       .catch((err) => {
         setIsLoadingDelete(false);
@@ -81,16 +105,16 @@ const PageScreenTypes: FunctionComponent = () => {
 
   const closeDialogDelete = () => {
     setIsDialogDeleteOpen(false);
-    setScreenTypeIdToDelete('');
+    setRoomIdToDelete('');
   }
 
   return (
     <div>
       <MaterialTable
-        title="ScreenTypes"
+        title="Rooms"
         isLoading={isTableLoading}
         columns={columns}
-        data={screenTypes}
+        data={rooms}
         options={{
           headerStyle: {
             backgroundColor: '#009be5',
@@ -109,7 +133,7 @@ const PageScreenTypes: FunctionComponent = () => {
           Action: prevProps => {
             if (prevProps.action.icon === 'add') {
               // Override 'add' Action
-              return <Button variant="contained" color="primary" startIcon={<AddIcon />} style={{marginLeft: '20px'}} onClick={() => onAddClick()}>Add ScreenType</Button>;
+              return <Button variant="contained" color="primary" startIcon={<AddIcon />} style={{marginLeft: '20px'}} onClick={() => onAddClick()}>Add Room</Button>;
             }
 
             return <MTableAction {...prevProps} />
@@ -117,35 +141,36 @@ const PageScreenTypes: FunctionComponent = () => {
         }}
       />
 
-      <DialogAddOrEditScreenType
-        screenTypeToEdit={screenTypeToEdit}
+      <DialogAddOrEditRoom
+        roomToEdit={roomToEdit}
         isOpen={isDialogAddOrEditOpen}
+        screenTypeList={screenTypeList}
         onClose={() => {
           setIsDialogAddOrEditOpen(false);
 
-          // setTimeout temp fix: transition (animation) doesn't catch up on setScreenTypeToEdit(null)
+          // setTimeout temp fix: transition (animation) doesn't catch up on setRoomToEdit(null)
           // TODO: Fix this
           setTimeout(() => {
-            setScreenTypeToEdit(null);
+            setRoomToEdit(null);
           }, 150);
         }}
         onSave={() => {
           setIsDialogAddOrEditOpen(false);
 
-          // setTimeout temp fix: transition (animation) doesn't catch up on setScreenTypeToEdit(null)
+          // setTimeout temp fix: transition (animation) doesn't catch up on setRoomToEdit(null)
           // TODO: Fix this
           setTimeout(() => {
-            setScreenTypeToEdit(null);
+            setRoomToEdit(null);
           }, 150);
 
-          getAllScreenTypes();
+          getAllRooms();
         }}
       />
 
       <DialogYesNo
         isOpen={isDialogDeleteOpen}
         isLoadingYes={isLoadingDelete}
-        onYes={() => {deleteScreenType(screenTypeIdToDelete);}}
+        onYes={() => {deleteRoom(roomIdToDelete);}}
         onNo={() => {closeDialogDelete();}}
         onClose={() => {closeDialogDelete();}}
       />
@@ -153,4 +178,4 @@ const PageScreenTypes: FunctionComponent = () => {
   );
 }
 
-export default PageScreenTypes;
+export default PageRooms;

@@ -34,13 +34,13 @@ const categories = [
       { id: 'Screen Types', icon: <IconAspectRatio />, path: '/screen-types' },
       { id: 'Rates', icon: <IconRate />, path: '/rates' },
       { id: 'Movies', icon: <IconMovie />, path: '/movies' },
-      { id: 'Rooms', icon: <IconMeetingRoom />, path: '/test' },
+      { id: 'Rooms', icon: <IconMeetingRoom />, path: '/rooms' },
     ],
   },
   {
     id: 'User',
     children: [
-      { id: 'Users', icon: <SettingsIcon />, path: '/user' },
+      { id: 'Users', icon: <SettingsIcon />, path: '/test' },
     ],
   },
 ];
