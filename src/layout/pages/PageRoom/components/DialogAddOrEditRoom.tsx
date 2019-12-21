@@ -22,11 +22,6 @@ import TextField from '@material-ui/core/TextField';
 // Custom Component
 import CheckboxGroup from '../../../../components/CheckboxGroup';
 
-interface IOptionScreenType {
-  screenType: ScreenType,
-  isSelected: boolean,
-}
-
 interface IDialogAddOrEditRoomProps {
   roomToEdit: Room | null, // null: DialogAdd. not null: DialogEdit
   isOpen: boolean,
