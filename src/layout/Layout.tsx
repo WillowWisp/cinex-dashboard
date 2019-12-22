@@ -14,6 +14,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
 import Link from '@material-ui/core/Link';
+import PrivateRoute from '../PrivateRoute';
 import Navigator from './components/Navigator';
 import Header from './components/Header';
 
@@ -180,11 +181,16 @@ const Layout: FunctionComponent<LayoutProps> = (props) => {
   };
 
   const renderRouteContent = () => {
+    // return routes.map(route => (
+    //   <Route path={route.path} key={route.path} exact={true}>
+    //     { route.component }
+    //   </Route>
+    // ))
     return routes.map(route => (
-      <Route path={route.path} key={route.path} exact={true}>
+      <PrivateRoute path={route.path} key={route.path} exact={true}>
         { route.component }
-      </Route>
-    ))
+      </PrivateRoute>
+    ));
   }
 
   return (

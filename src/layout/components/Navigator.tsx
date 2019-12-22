@@ -41,7 +41,7 @@ const categories = [
   {
     id: 'User',
     children: [
-      { id: 'Users', icon: <SettingsIcon />, path: '/test' },
+      { id: 'Login', icon: <SettingsIcon />, path: '/login' },
     ],
   },
 ];
