@@ -6,6 +6,7 @@ import PageMovies from './layout/pages/PageMovies/PageMovies';
 import PageRates from './layout/pages/PageRates/PageRates';
 import PageRooms from './layout/pages/PageRoom/PageRoom';
 import PageScreenTypes from './layout/pages/PageScreenTypes/PageScreenTypes';
+import PageShowtimes from './layout/pages/PageShowtimes/PageShowtimes';
 import PageTest from './layout/pages/PageTest/PageTest';
 
 export const routes = [
@@ -32,6 +33,10 @@ export const routes = [
   {
     path: '/screen-types',
     component: <PageScreenTypes />
+  },
+  {
+    path: '/showtimes',
+    component: <PageShowtimes />
   },
   {
     path: '/test',

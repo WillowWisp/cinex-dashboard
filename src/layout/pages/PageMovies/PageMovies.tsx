@@ -226,7 +226,7 @@ const PageMovies: FunctionComponent = () => {
       <DialogEditMovie
         isOpen={isDialogEditOpen}
         movieToEdit={movieToEdit}
-        rateLit={rateList}
+        rateList={rateList}
         screenTypeList={screenTypeList}
         onClose={() => {
           setIsDialogEditOpen(false);

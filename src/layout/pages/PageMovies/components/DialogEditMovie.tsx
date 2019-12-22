@@ -31,7 +31,7 @@ import MultipleInputActors from './MultipleInputActors';
 interface IDialogAddMovieProps {
   movieToEdit: Movie | null,
   isOpen: boolean,
-  rateLit: Rate[]
+  rateList: Rate[]
   screenTypeList: ScreenType[],
   onClose: Function, // Call this to close Dialog
   onSave: Function, // Call this to close Dialog & refresh table
@@ -136,7 +136,7 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
                 style={{ width: '100px', marginTop: 5, }}
                 onChange={(event) => {setMovieInput({...movieInput, rateId: event.target.value as string})}}
               >
-                {props.rateLit.map(rate => (
+                {props.rateList.map(rate => (
                   <MenuItem key={rate.id} value={rate.id}>{rate.name}</MenuItem>
                 ))}
               </Select>
