@@ -35,6 +35,7 @@ const categories = [
       { id: 'Rates', icon: <IconRate />, path: '/rates' },
       { id: 'Movies', icon: <IconMovie />, path: '/movies' },
       { id: 'Rooms', icon: <IconMeetingRoom />, path: '/rooms' },
+      { id: 'Showtimes', icon: <IconMovie />, path: '/showtimes' },
     ],
   },
   {
