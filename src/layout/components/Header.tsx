@@ -65,7 +65,7 @@ const Header: FunctionComponent<HeaderProps> = (props) => {
             <Grid item xs />
             <Grid item>
               <Link className={classes.link} href="#" variant="body2">
-                Go to docs
+                Go to Homepage
               </Link>
             </Grid>
             <Grid item>
