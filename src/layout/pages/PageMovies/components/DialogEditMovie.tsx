@@ -2,6 +2,7 @@ import React, { useState, FunctionComponent } from 'react';
 
 // Misc
 import * as movieAPI from '../../../../api/movieAPI';
+import moment from 'moment';
 
 // Interface
 import { Movie, MovieUpdateInput } from '../../../../interfaces/movie';
@@ -9,6 +10,8 @@ import { Rate } from '../../../../interfaces/rate';
 import { ScreenType } from '../../../../interfaces/screenType';
 
 // Component
+import MomentUtils from '@date-io/moment';
+import { DateTimePicker, MuiPickersUtilsProvider } from '@material-ui/pickers';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
@@ -38,7 +41,7 @@ interface IDialogAddMovieProps {
 }
 
 const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
-  const [movieInput, setMovieInput] = useState<MovieUpdateInput>({ title: '', storyline: '', actors: [], released: '', endAt: '', poster: '', trailer: '', wallpapers: [''], rateId: '', screenTypeIds: [], });
+  const [movieInput, setMovieInput] = useState<MovieUpdateInput>({ title: '', storyline: '', actors: [], released: '', endAt: moment().add(1, 'hour').startOf('hour').toISOString(), poster: '', trailer: '', wallpapers: [''], rateId: '', screenTypeIds: [], });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
 
   const onDialogEnter = () => {
@@ -117,7 +120,7 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
               onChange={(event) => {setMovieInput({...movieInput, title: event.target.value })}}
             />
             {renderScreenTypeCheckboxes()}
-            <TextField
+            {/* <TextField
               required
               label="Release date"
               type="date"
@@ -142,6 +145,25 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
               variant="outlined"
               value={movieInput.endAt}
               onChange={(event) => {setMovieInput({...movieInput, endAt: event.target.value }); console.log(event.target.value)}}
+            /> */}
+            <MuiPickersUtilsProvider utils={MomentUtils}>
+              <DateTimePicker
+                required
+                label="End at"
+                inputVariant="outlined"
+                style={{ margin: 10, marginBottom: 20 }}
+                fullWidth
+                minDate={moment()}
+                minutesStep={5}
+                value={movieInput.endAt}
+                onChange={(date) => {
+                  if (date) {
+                    setMovieInput({...movieInput, endAt: date.toISOString()});
+                  }
+                }}
+              />
+            </MuiPickersUtilsProvider>
+            <FormControl style={{ margin: 10, marginBottom: 20, }}>
             />
             <TextField
               required

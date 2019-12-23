@@ -143,7 +143,7 @@ const PageLogin: FunctionComponent = () => {
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                onClick={()=>{console.log(username)}}
+                onClick={postLogin}
               >
                 Sign In
               </Button>
