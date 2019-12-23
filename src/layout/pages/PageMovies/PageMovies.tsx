@@ -88,7 +88,7 @@ const PageMovies: FunctionComponent = () => {
       title: 'Rated',
       field: 'rated',
       render: (rowData) => {
-        return (<span>{rowData.rated.name}</span>)
+        return (<span>{rowData.rated ? rowData.rated.name : ''}</span>)
       }
     },
   ]
