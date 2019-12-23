@@ -12,6 +12,15 @@ import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
+import Button from '@material-ui/core/Button';
+import Menu, { MenuProps } from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+import DraftsIcon from '@material-ui/icons/Drafts';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp'
+import SendIcon from '@material-ui/icons/Send';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -42,8 +51,48 @@ interface HeaderProps extends WithStyles<typeof styles> {
   onDrawerToggle: () => void;
 }
 
+const StyledMenu = withStyles({
+  paper: {
+    border: '1px solid #d3d4d5',
+  },
+})((props: MenuProps) => (
+  <Menu
+    elevation={0}
+    getContentAnchorEl={null}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'center',
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'center',
+    }}
+    {...props}
+  />
+));
+
+const StyledMenuItem = withStyles(theme => ({
+  root: {
+    '&:focus': {
+      backgroundColor: theme.palette.primary.main,
+      '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
+        color: theme.palette.common.white,
+      },
+    },
+  },
+}))(MenuItem);
+
 const Header: FunctionComponent<HeaderProps> = (props) => {
   const { classes, onDrawerToggle } = props;
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+
+  const handleAvatarClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleAvatarMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   return (
     <React.Fragment>
@@ -76,9 +125,41 @@ const Header: FunctionComponent<HeaderProps> = (props) => {
               </Tooltip>
             </Grid>
             <Grid item>
-              <IconButton color="inherit" className={classes.iconButtonAvatar}>
+              <IconButton
+                color="inherit"
+                className={classes.iconButtonAvatar}
+                onClick={handleAvatarClick}
+                aria-controls="customized-menu"
+                aria-haspopup="true"
+              >
                 <Avatar src="/static/images/avatar/1.jpg" alt="My Avatar" />
               </IconButton>
+              <StyledMenu
+                id="customized-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleAvatarMenuClose}
+              >
+                {/* <StyledMenuItem>
+                  <ListItemIcon>
+                    <SendIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText primary="Sent mail" />
+                </StyledMenuItem>
+                <StyledMenuItem>
+                  <ListItemIcon>
+                    <InboxIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText primary="Inbox" />
+                </StyledMenuItem> */}
+                <StyledMenuItem>
+                  <ListItemIcon>
+                    <ExitToAppIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText primary="Log Out" />
+                </StyledMenuItem>
+              </StyledMenu>
             </Grid>
           </Grid>
         </Toolbar>
