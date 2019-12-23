@@ -38,17 +38,21 @@ interface IDialogAddMovieProps {
 }
 
 const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
-  const [movieInput, setMovieInput] = useState<MovieUpdateInput>({ title: '', actors: [], endAt: '', poster: '', rateId: '', screenTypeIds: [] });
+  const [movieInput, setMovieInput] = useState<MovieUpdateInput>({ title: '', storyline: '', actors: [], released: '', endAt: '', poster: '', trailer: '', wallpapers: [''], rateId: '', screenTypeIds: [], });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
 
   const onDialogEnter = () => {
     if (props.movieToEdit) {
       setMovieInput({
         title: props.movieToEdit.title,
+        storyline: props.movieToEdit.storyline ? props.movieToEdit.storyline : '',
         actors: [...props.movieToEdit.actors],
+        released: props.movieToEdit.released,
         endAt: props.movieToEdit.endAt,
         poster: props.movieToEdit.poster,
-        rateId: props.movieToEdit.rated.id,
+        trailer: props.movieToEdit.trailer ? props.movieToEdit.trailer : '',
+        wallpapers: props.movieToEdit.wallpapers ? props.movieToEdit.wallpapers : [''],
+        rateId: props.movieToEdit.rated ? props.movieToEdit.rated.id : '',
         screenTypeIds: props.movieToEdit.screenTypes.map(screenType => screenType.id),
       });
     }
@@ -115,6 +119,19 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
             {renderScreenTypeCheckboxes()}
             <TextField
               required
+              label="Release date"
+              type="date"
+              style={{ margin: 10, marginBottom: 20, }}
+              placeholder="2020-01-20"
+              fullWidth
+              margin="normal"
+              InputLabelProps={{ shrink: true, }}
+              variant="outlined"
+              value={movieInput.released}
+              onChange={(event) => {setMovieInput({...movieInput, released: event.target.value }); console.log(event.target.value)}}
+            />
+            <TextField
+              required
               label="End at"
               type="date"
               style={{ margin: 10, marginBottom: 20, }}
@@ -126,14 +143,26 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
               value={movieInput.endAt}
               onChange={(event) => {setMovieInput({...movieInput, endAt: event.target.value }); console.log(event.target.value)}}
             />
-            <FormControl style={{ margin: 10, marginBottom: 20, }}>
+            <TextField
+              required
+              label="Storyline"
+              style={{ margin: 10, marginBottom: 20, }}
+              placeholder="After the devastating events of Avengers: Infinity War (2018), the universe is in ruins. With the help of remaining allies, the Avengers assemble once more in order to reverse Thanos' actions and restore balance to the universe."
+              fullWidth
+              margin="normal"
+              InputLabelProps={{ shrink: true, }}
+              variant="outlined"
+              value={movieInput.storyline}
+              onChange={(event) => {setMovieInput({...movieInput, storyline: event.target.value })}}
+            />
+            <FormControl style={{ margin: 10, marginBottom: 20, }} fullWidth>
               {/* <InputLabel id="rate-select-label">Rate</InputLabel> */}
               <FormLabel>Rate:</FormLabel>
               <Select
                 labelId="rate-select-label"
                 value={movieInput.rateId}
                 variant="outlined"
-                style={{ width: '100px', marginTop: 5, }}
+                style={{ marginTop: 5, }}
                 onChange={(event) => {setMovieInput({...movieInput, rateId: event.target.value as string})}}
               >
                 {props.rateList.map(rate => (
@@ -161,6 +190,32 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
               onChange={(event) => {setMovieInput({...movieInput, poster: event.target.value })}}
             />
             <img src={movieInput.poster} alt={movieInput.title} style={{width: 200, height: 300,}} />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField
+              required
+              label="Trailer"
+              style={{ margin: 10, marginBottom: 20, }}
+              placeholder="https://www.youtube.com/watch?v=TcMBFSGVi1c"
+              fullWidth
+              margin="normal"
+              InputLabelProps={{ shrink: true, }}
+              variant="outlined"
+              value={movieInput.trailer}
+              onChange={(event) => {setMovieInput({...movieInput, trailer: event.target.value })}}
+            />
+            <TextField
+              required
+              label="Wallpaper"
+              style={{ margin: 10, marginBottom: 20, }}
+              placeholder="https://i.pinimg.com/originals/36/bd/7c/36bd7c8bbdd16c2e9bb3ae331f0e47a9.jpg"
+              fullWidth
+              margin="normal"
+              InputLabelProps={{ shrink: true, }}
+              variant="outlined"
+              value={movieInput.wallpapers[0]}
+              onChange={(event) => {setMovieInput({...movieInput, wallpapers: [event.target.value] })}}
+            />
           </Grid>
         </Grid>
         

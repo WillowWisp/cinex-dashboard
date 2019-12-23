@@ -10,6 +10,7 @@ export interface Actor {
 export interface Movie {
   id: string,
   title: string,
+  storyline: string, //
   genres: Genre[],
   screenTypes: ScreenType[],
   directors: string[],
@@ -19,6 +20,8 @@ export interface Movie {
   endAt: string,
   runtime: number,
   poster: string,
+  trailer: string, //
+  wallpapers: string[], //
   rated: Rate,
 }
 
@@ -31,9 +34,13 @@ export interface MovieInsertInput {
 
 export interface MovieUpdateInput {
   title: string,
+  storyline: string, //
   actors: Actor[],
+  released: string, //
   endAt: string,
   poster: string,
+  trailer: string, //
+  wallpapers: string[], //
   rateId: string,
   screenTypeIds: string[],
 }
