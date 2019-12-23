@@ -163,8 +163,6 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
                 }}
               />
             </MuiPickersUtilsProvider>
-            <FormControl style={{ margin: 10, marginBottom: 20, }}>
-            />
             <TextField
               required
               label="Storyline"
