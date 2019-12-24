@@ -1,23 +1,23 @@
-import React, { useEffect, useState, FunctionComponent } from 'react';
+import React, { useState, FunctionComponent } from 'react';
 
 // Misc
 import * as authAPI from '../../../api/authAPI';
-import { useAuth, AuthContext } from '../../../context/auth';
+import { useAuth } from '../../../context/authContext';
 
 // Interface
 
 // Component
-import { Redirect } from 'react-router-dom';
+// import { Redirect } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Card from '@material-ui/core/Card';
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
+// import Link from '@material-ui/core/Link';
+// import Grid from '@material-ui/core/Grid';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
@@ -28,74 +28,63 @@ import Container from '@material-ui/core/Container';
 const PageLogin: FunctionComponent = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [isLoggedIn, setLoggedIn] = useState(false);
 
-  const { setAuthTokens } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const { authContext, setAuthContext } = useAuth();
 
   const classes = useStyles();
 
-  function postLogin() {
-    // axios.post("https://www.somePlace.com/auth/login", {
-    //   userName,
-    //   password
-    // }).then(result => {
-    //   if (result.status === 200) {
-    //     setAuthTokens(result.data);
-    //     setLoggedIn(true);
-    //   } else {
-    //     setIsError(true);
-    //   }
-    // }).catch(e => {
-    //   setIsError(true);
-    // });
-
+  const onLogin = () => {
+    setIsLoading(true);
     authAPI.login(username, password)
-      .then(result => {
-        console.log(result);
+      .then(response => {
+        setIsLoading(false);
+        setErrorMessage('');
+        console.log(response);
+        setAuthContext(response.data.token);
       })
       .catch(err => {
+        setIsLoading(false);
+        setErrorMessage('Wrong username or password. Please try again.');
         console.log(err);
       });
   }
 
-  if (isLoggedIn) {
-    return <Redirect to="/" />;
+  const onLogout = () => {
+    setAuthContext('');
   }
 
-  // return (
-  //   <Card>
-  //     <Logo src={logoImg} />
-  //     <Form>
-  //       <Input
-  //         type="username"
-  //         value={userName}
-  //         onChange={e => {
-  //           setUserName(e.target.value);
-  //         }}
-  //         placeholder="email"
-  //       />
-  //       <Input
-  //         type="password"
-  //         value={password}
-  //         onChange={e => {
-  //           setPassword(e.target.value);
-  //         }}
-  //         placeholder="password"
-  //       />
-  //       <Button onClick={postLogin}>Sign In</Button>
-  //     </Form>
-  //     <Link to="/signup">Don't have an account?</Link>
-  //       { isError &&<Error>The username or password provided were incorrect!</Error> }
-  //   </Card>
-  // );
-
-  // return (
-  //   <div>
-  //     <input type="text" placeholder="username" value={username} onChange={event => {setUsername(event.target.value)}}/>
-  //     <input type="text" placeholder="password" value={password} onChange={event => {setPassword(event.target.value)}}/>
-  //     <button onClick={() => {postLogin()}}>Login</button>
-  //   </div>
-  // )
+  if (authContext.token) {
+    return (
+      <Card className={classes.card}>
+        <Container component="main" maxWidth="xs">
+            
+          <CssBaseline />
+          <div className={classes.paper}>
+            <Avatar className={classes.avatar}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              You've already logged in.
+            </Typography>
+            <form className={classes.form} noValidate>
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                className={classes.submit}
+                onClick={onLogout}
+              >
+                Logout
+              </Button>
+            </form>
+          </div>
+      </Container>
+    </Card>
+    )
+  }
 
   return (
     <Card className={classes.card}>
@@ -110,6 +99,8 @@ const PageLogin: FunctionComponent = () => {
               Sign in
             </Typography>
             <form className={classes.form} noValidate>
+              {/* TODO: Clean this up */}
+              <div style={{ color: 'red' }}>{errorMessage}</div>
               <TextField
                 variant="outlined"
                 margin="normal"
@@ -120,6 +111,11 @@ const PageLogin: FunctionComponent = () => {
                 name="username"
                 value={username}
                 onChange={event => {setUsername(event.target.value)}}
+                onKeyUp={(event) => {
+                  if (event.key === 'Enter') {
+                    onLogin();
+                  }
+                }}
                 autoFocus
               />
               <TextField
@@ -133,21 +129,40 @@ const PageLogin: FunctionComponent = () => {
                 id="password"
                 value={password}
                 onChange={event => {setPassword(event.target.value)}}
+                onKeyUp={(event) => {
+                  if (event.key === 'Enter') {
+                    onLogin();
+                  }
+                }}
               />
               <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
               />
-              <Button
+              {/* <Button
                 fullWidth
                 variant="contained"
                 color="primary"
                 className={classes.submit}
-                onClick={postLogin}
+                onClick={onLogin}
               >
                 Sign In
-              </Button>
-              <Grid container>
+              </Button> */}
+              <div style={{position: 'relative'}}>
+                {/* Extra <div> is for loading */}
+                <Button
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  onClick={onLogin}
+                  disabled={isLoading}
+                >
+                  Sign In
+                </Button>
+                {isLoading ? <CircularProgress size={24} className="circular-center-size-24px" /> : null}
+              </div>
+              {/* <Grid container>
                 <Grid item xs>
                   <Link href="#" variant="body2">
                     Forgot password?
@@ -158,7 +173,7 @@ const PageLogin: FunctionComponent = () => {
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
-              </Grid>
+              </Grid> */}
             </form>
           </div>
       </Container>

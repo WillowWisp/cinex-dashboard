@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core/styles';
 import { routes } from '../routes';
 
-import { Switch, Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Hidden from '@material-ui/core/Hidden';
 import Typography from '@material-ui/core/Typography';
@@ -187,7 +187,7 @@ const Layout: FunctionComponent<LayoutProps> = (props) => {
     //   </Route>
     // ))
     return routes.map(route => (
-      <PrivateRoute path={route.path} key={route.path} exact={true}>
+      <PrivateRoute path={route.path} key={route.path} exact={true} requiredRoles={route.requiredRoles}>
         { route.component }
       </PrivateRoute>
     ));

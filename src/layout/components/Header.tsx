@@ -12,15 +12,15 @@ import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import Toolbar from '@material-ui/core/Toolbar';
 import Tooltip from '@material-ui/core/Tooltip';
-import Button from '@material-ui/core/Button';
+// import Button from '@material-ui/core/Button';
 import Menu, { MenuProps } from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
+// import InboxIcon from '@material-ui/icons/MoveToInbox';
+// import DraftsIcon from '@material-ui/icons/Drafts';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp'
-import SendIcon from '@material-ui/icons/Send';
+// import SendIcon from '@material-ui/icons/Send';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 
@@ -132,7 +132,7 @@ const Header: FunctionComponent<HeaderProps> = (props) => {
                 aria-controls="customized-menu"
                 aria-haspopup="true"
               >
-                <Avatar src="/static/images/avatar/1.jpg" alt="My Avatar" />
+                <Avatar src="http://rentzet.com/homerun/assets/images/no-avatar.png" alt="My Avatar" />
               </IconButton>
               <StyledMenu
                 id="customized-menu"

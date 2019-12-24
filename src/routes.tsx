@@ -13,38 +13,47 @@ import PageTest from './layout/pages/PageTest/PageTest';
 export const routes = [
   {
     path: '/',
-    component: <PageDashboard />
+    component: <PageDashboard />,
+    requiredRoles: [],
   },
   {
     path: '/login',
-    component: <PageLogin />
+    component: <PageLogin />,
+    requiredRoles: [],
   },
   {
     path: '/genres',
-    component: <PageGenres />
+    component: <PageGenres />,
+    requiredRoles: ['admin'],
   },
   {
     path: '/movies',
-    component: <PageMovies />
+    component: <PageMovies />,
+    requiredRoles: ['admin'],
   },
   {
     path: '/rates',
-    component: <PageRates />
+    component: <PageRates />,
+    requiredRoles: ['admin'],
   },
   {
     path: '/rooms',
-    component: <PageRooms />
+    component: <PageRooms />,
+    requiredRoles: ['admin'],
   },
   {
     path: '/screen-types',
-    component: <PageScreenTypes />
+    component: <PageScreenTypes />,
+    requiredRoles: ['admin'],
   },
   {
     path: '/showtimes',
-    component: <PageShowtimes />
+    component: <PageShowtimes />,
+    requiredRoles: ['admin'],
   },
   {
     path: '/test',
-    component: <PageTest />
+    component: <PageTest />,
+    requiredRoles: ['admin'],
   },
 ];
