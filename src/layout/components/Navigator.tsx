@@ -1,5 +1,7 @@
 import React, { FunctionComponent } from 'react';
 
+import { useAuth } from '../../context/authContext';
+
 import { createStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import { Omit } from '@material-ui/types';
 import clsx from 'clsx';
@@ -17,33 +19,34 @@ import IconList from '@material-ui/icons/List';
 import IconMeetingRoom from '@material-ui/icons/MeetingRoom';
 import IconMovie from '@material-ui/icons/Movie';
 import IconPeople from '@material-ui/icons/People';
-import SettingsIcon from '@material-ui/icons/Settings';
+import IconVpnKey from '@material-ui/icons/VpnKey';
 import IconRate from '@material-ui/icons/PregnantWoman';
 
 const categories = [
   {
     id: 'Dashboard',
     children: [
-      { id: 'Home', icon: <IconPeople />, path: '/' },
+      { id: 'Home', icon: <IconPeople />, path: '/', requiredRoles: [] }, // temp requiredRoles, will sync to 'route' array later
+      { id: 'Login', icon: <IconVpnKey />, path: '/login', requiredRoles: [] },
     ],
   },
   {
     id: 'Theater',
     children: [
-      { id: 'Genres', icon: <IconList />, path: '/genres' },
-      { id: 'Screen Types', icon: <IconAspectRatio />, path: '/screen-types' },
-      { id: 'Rates', icon: <IconRate />, path: '/rates' },
-      { id: 'Movies', icon: <IconMovie />, path: '/movies' },
-      { id: 'Rooms', icon: <IconMeetingRoom />, path: '/rooms' },
-      { id: 'Showtimes', icon: <IconMovie />, path: '/showtimes' },
+      { id: 'Genres', icon: <IconList />, path: '/genres', requiredRoles: ['admin'] },
+      { id: 'Screen Types', icon: <IconAspectRatio />, path: '/screen-types', requiredRoles: ['admin'] },
+      { id: 'Rates', icon: <IconRate />, path: '/rates', requiredRoles: ['admin'] },
+      { id: 'Movies', icon: <IconMovie />, path: '/movies', requiredRoles: ['admin'] },
+      { id: 'Rooms', icon: <IconMeetingRoom />, path: '/rooms', requiredRoles: ['admin'] },
+      { id: 'Showtimes', icon: <IconMovie />, path: '/showtimes', requiredRoles: ['admin'] },
     ],
   },
-  {
-    id: 'User',
-    children: [
-      { id: 'Login', icon: <SettingsIcon />, path: '/login' },
-    ],
-  },
+  // {
+  //   id: 'User',
+  //   children: [
+  //     { id: 'Login', icon: <SettingsIcon />, path: '/login', requiredRoles: [] },
+  //   ],
+  // },
 ];
 
 const styles = (theme: Theme) =>
@@ -92,6 +95,61 @@ export interface NavigatorProps extends Omit<DrawerProps, 'classes'>, WithStyles
 
 const Navigator: FunctionComponent<NavigatorProps> = (props) => {
   const { classes, ...other } = props;
+  const { authContext } = useAuth();
+
+  const renderNavItems = () => {
+    // const routeToDisplay = categories.filter(category => {
+    //   if (category.requiredRoles.length <= 0) {
+    //     return true;
+    //   }
+
+    //   return authContext.roles.some(userRole => props.requiredRoles.indexOf(userRole));
+    // })
+
+    return categories.map(({ id, children }) => (
+      <React.Fragment key={id}>
+        <ListItem className={classes.categoryHeader}>
+          <ListItemText
+            classes={{
+              primary: classes.categoryHeaderPrimary,
+            }}
+          >
+            {id}
+          </ListItemText>
+        </ListItem>
+        {children.map(({ id: childId, icon, path, requiredRoles }) => {
+          let isAllowed = false;
+          if (requiredRoles.length <= 0) {
+            isAllowed = true;
+          } else {
+            isAllowed = authContext.roles.some(userRole => requiredRoles.indexOf(userRole) > -1);
+          }
+
+          if (isAllowed === false) {
+            return null;
+          }
+
+          return (
+            <ListItem
+              key={childId}
+              button
+              component={NavLink} to={path} activeClassName={classes.itemActiveItem} exact={true}
+              className={classes.item}
+            >
+              <ListItemIcon className={classes.itemIcon}>{icon}</ListItemIcon>
+              <ListItemText
+                classes={{
+                  primary: classes.itemPrimary,
+                }}
+              >
+                {childId}
+              </ListItemText>
+            </ListItem>);
+          })}
+        <Divider className={classes.divider} />
+      </React.Fragment>
+    ));
+  }
 
   return (
     <Drawer variant="permanent" {...other}>
@@ -111,7 +169,7 @@ const Navigator: FunctionComponent<NavigatorProps> = (props) => {
             Cinex NYC
           </ListItemText>
         </ListItem>
-        {categories.map(({ id, children }) => (
+        {/* {categories.map(({ id, children }) => (
           <React.Fragment key={id}>
             <ListItem className={classes.categoryHeader}>
               <ListItemText
@@ -141,7 +199,8 @@ const Navigator: FunctionComponent<NavigatorProps> = (props) => {
             ))}
             <Divider className={classes.divider} />
           </React.Fragment>
-        ))}
+        ))} */}
+        {renderNavItems()}
       </List>
     </Drawer>
   );

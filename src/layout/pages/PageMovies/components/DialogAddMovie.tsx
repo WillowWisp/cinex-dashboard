@@ -6,7 +6,7 @@ import moment from 'moment';
 
 // Interface
 import { MovieInsertInput } from '../../../../interfaces/movie';
-import { Rate } from '../../../../interfaces/rate';
+// import { Rate } from '../../../../interfaces/rate';
 import { ScreenType } from '../../../../interfaces/screenType';
 
 // Component
