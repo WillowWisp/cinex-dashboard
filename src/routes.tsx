@@ -9,6 +9,7 @@ import PageRates from './layout/pages/PageRates/PageRates';
 import PageRooms from './layout/pages/PageRoom/PageRoom';
 import PageScreenTypes from './layout/pages/PageScreenTypes/PageScreenTypes';
 import PageShowtimes from './layout/pages/PageShowtimes/PageShowtimes';
+import PageDiscounts from './layout/pages/PageDiscounts/PageDiscounts';
 import PageTest from './layout/pages/PageTest/PageTest';
 
 export const routes = [
@@ -55,6 +56,11 @@ export const routes = [
   {
     path: '/showtimes',
     component: <PageShowtimes />,
+    requiredRoles: ['admin'],
+  },
+  {
+    path: '/discounts',
+    component: <PageDiscounts />,
     requiredRoles: ['admin'],
   },
   {

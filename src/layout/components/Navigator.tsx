@@ -20,7 +20,8 @@ import IconMeetingRoom from '@material-ui/icons/MeetingRoom';
 import IconMovie from '@material-ui/icons/Movie';
 import IconPeople from '@material-ui/icons/People';
 import IconVpnKey from '@material-ui/icons/VpnKey';
-import IconRate from '@material-ui/icons/PregnantWoman';
+import IconRate from '@material-ui/icons/Cake';
+import IconDiscount from '@material-ui/icons/Redeem';
 
 const categories = [
   {
@@ -40,6 +41,7 @@ const categories = [
       { id: 'Movies', icon: <IconMovie />, path: '/movies', requiredRoles: ['admin'] },
       { id: 'Rooms', icon: <IconMeetingRoom />, path: '/rooms', requiredRoles: ['admin'] },
       { id: 'Showtimes', icon: <IconMovie />, path: '/showtimes', requiredRoles: ['admin'] },
+      { id: 'Discounts', icon: <IconDiscount />, path: '/discounts', requiredRoles: ['admin'] },
     ],
   },
   // {
