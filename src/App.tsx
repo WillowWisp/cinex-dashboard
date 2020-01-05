@@ -28,6 +28,11 @@ const App: React.FC = () => {
       };
       localStorage.setItem('token', tokenStr);
       setAuthContext(newAuthContext);
+
+      axios.interceptors.request.use(function (config) {
+        config.headers.Authorization = 'Bearer ' + tokenStr;
+        return config;
+      });
     } else {
       localStorage.removeItem('token');
       setAuthContext({ roles: [] as Array<string>, username: '', token: '' });
