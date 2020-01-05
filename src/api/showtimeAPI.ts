@@ -9,6 +9,10 @@ export const getAllShowtimes = () => {
   return axios.get('/showtimes');
 }
 
+export const getAllShowtimesByClusterId = (clusterId: string) => {
+  return axios.get(`/showtimes/cluster/${clusterId}`);
+}
+
 export const addShowtime = (data: ShowtimeInput) => {
   return axios.post('/showtimes', data);
 }

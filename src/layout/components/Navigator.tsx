@@ -33,6 +33,7 @@ const categories = [
   {
     id: 'Theater',
     children: [
+      { id: 'Clusters', icon: <IconMeetingRoom />, path: '/clusters', requiredRoles: ['admin'] },
       { id: 'Genres', icon: <IconList />, path: '/genres', requiredRoles: ['admin'] },
       { id: 'Screen Types', icon: <IconAspectRatio />, path: '/screen-types', requiredRoles: ['admin'] },
       { id: 'Rates', icon: <IconRate />, path: '/rates', requiredRoles: ['admin'] },

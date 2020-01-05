@@ -5,6 +5,7 @@ import * as roomAPI from '../../../../api/roomAPI';
 
 // Interface
 import { Room, RoomInput } from '../../../../interfaces/room';
+import { Cluster } from '../../../../interfaces/cluster';
 import { ScreenType } from '../../../../interfaces/screenType';
 
 // Component
@@ -15,8 +16,11 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import FormControl from '@material-ui/core/FormControl';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormLabel from '@material-ui/core/FormLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 
 // Custom Component
@@ -25,22 +29,24 @@ import CheckboxGroup from '../../../../components/CheckboxGroup';
 interface IDialogAddOrEditRoomProps {
   roomToEdit: Room | null, // null: DialogAdd. not null: DialogEdit
   isOpen: boolean,
+  clusterList: Cluster[],
   screenTypeList: ScreenType[],
+  selectedClusterId: string,
   onClose: Function, // Call this to close Dialog
   onSave: Function, // Call this to close Dialog & refresh table
 }
 
 const DialogAddOrEditRoom: FunctionComponent<IDialogAddOrEditRoomProps> = (props) => {
-  const [roomInput, setRoomInput] = useState<RoomInput>({ name: '', clusterId: '5dc77c3f06e6b13dc44b6cac', screenTypeIds: [], totalRows: 0, totalSeatsPerRow: 0 });
+  const [roomInput, setRoomInput] = useState<RoomInput>({ name: '', clusterId: props.selectedClusterId, screenTypeIds: [], totalRows: 0, totalSeatsPerRow: 0 });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
 
   const onDialogEnter = () => {
     if (!props.roomToEdit) {
-      setRoomInput({ name: '', clusterId: '5dc77c3f06e6b13dc44b6cac', screenTypeIds: [], totalRows: 0, totalSeatsPerRow: 0 });
+      setRoomInput({ name: '', clusterId: props.selectedClusterId, screenTypeIds: [], totalRows: 0, totalSeatsPerRow: 0 });
     } else {
       setRoomInput({
         name: props.roomToEdit.name,
-        clusterId: '5dc77c3f06e6b13dc44b6cac',
+        clusterId: props.selectedClusterId,
         screenTypeIds: props.roomToEdit.screenTypes.map(screenType => screenType.id),
         totalRows: props.roomToEdit.totalRows,
         totalSeatsPerRow: props.roomToEdit.totalSeatsPerRow,
@@ -105,6 +111,21 @@ const DialogAddOrEditRoom: FunctionComponent<IDialogAddOrEditRoomProps> = (props
         <DialogContentText>
           Please fill those fields below to continue.
         </DialogContentText>
+        <FormControl style={{ margin: 10, marginBottom: 20, }} fullWidth>
+          {/* <InputLabel id="rate-select-label">Rate</InputLabel> */}
+          <FormLabel>Cluster:</FormLabel>
+          <Select
+            labelId="cluster-select-label"
+            value={roomInput.clusterId}
+            variant="outlined"
+            style={{ marginTop: 5, }}
+            onChange={(event) => {setRoomInput({...roomInput, clusterId: event.target.value as string})}}
+          >
+            {props.clusterList.map(cluster => (
+              <MenuItem key={cluster.id} value={cluster.id}>{cluster.name}</MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <TextField
           required
           label="Room name"

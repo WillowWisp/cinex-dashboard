@@ -2,6 +2,7 @@ import React from 'react';
 
 import PageDashboard from './layout/pages/PageDashboard/PageDashboard';
 import PageLogin from './layout/pages/PageLogin/PageLogin';
+import PageClusters from './layout/pages/PageClusters/PageClusters';
 import PageGenres from './layout/pages/PageGenres/PageGenres';
 import PageMovies from './layout/pages/PageMovies/PageMovies';
 import PageRates from './layout/pages/PageRates/PageRates';
@@ -20,6 +21,11 @@ export const routes = [
     path: '/login',
     component: <PageLogin />,
     requiredRoles: [],
+  },
+  {
+    path: '/clusters',
+    component: <PageClusters />,
+    requiredRoles: ['admin'],
   },
   {
     path: '/genres',

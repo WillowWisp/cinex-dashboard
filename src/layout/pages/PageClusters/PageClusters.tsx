@@ -1,10 +1,10 @@
 import React, { useEffect, useState, FunctionComponent } from 'react';
 
 // Misc
-import * as genreAPI from '../../../api/genreAPI';
+import * as clusterAPI from '../../../api/clusterAPI';
 
 // Interface
-import { Genre } from '../../../interfaces/genre';
+import { Cluster } from '../../../interfaces/cluster';
 
 // Component
 import AddIcon from '@material-ui/icons/Add';
@@ -12,37 +12,38 @@ import Button from '@material-ui/core/Button';
 import MaterialTable, { Column, MTableAction } from 'material-table';
 
 // Custom Component
-import DialogAddOrEditGenre from './components/DialogAddOrEditGenre';
+import DialogAddOrEditCluster from './components/DialogAddOrEditCluster';
 import DialogYesNo from '../../../components/DialogYesNo';
 
 // Class
-// import classes from './PageGenres.module.scss';
+// import classes from './PageClusters.module.scss';
 
-const PageGenres: FunctionComponent = () => {
-  const [genres, setGenres] = useState<Array<Genre>>([]);
-  const [genreToEdit, setGenreToEdit] = useState<Genre | null>(null);
+const PageClusters: FunctionComponent = () => {
+  const [clusters, setClusters] = useState<Array<Cluster>>([]);
   const [isTableLoading, setIsTableLoading] = useState(false);
+  // Add or edit Dialog
   const [isDialogAddOrEditOpen, setIsDialogAddOrEditOpen] = useState(false);
+  const [clusterToEdit, setClusterToEdit] = useState<Cluster | null>(null);
   // Delete Dialog
-  const [genreIdToDelete, setGenreIdToDelete] = useState(''); // TODO: Find out if we need to make this a state
+  const [clusterIdToDelete, setClusterIdToDelete] = useState(''); // TODO: Find out if we need to make this a state
   const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState(false);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
   
-  const columns: Array<Column<Genre>> = [
+  const columns: Array<Column<Cluster>> = [
     { title: 'Id', field: 'id', editable: 'never', cellStyle: {width: '300px'} },
     { title: 'Name', field: 'name' },
   ]
 
   useEffect(() => {
-    getAllGenres();
+    getAllClusters();
   }, []);
 
-  const getAllGenres = () => {
+  const getAllClusters = () => {
     setIsTableLoading(true);
-    genreAPI.getAllGenres()
+    clusterAPI.getAllClusters()
       .then(response => {
         setIsTableLoading(false);
-        setGenres(response.data);
+        setClusters(response.data);
       })
       .catch(err => {
         setIsTableLoading(false);
@@ -54,42 +55,42 @@ const PageGenres: FunctionComponent = () => {
     setIsDialogAddOrEditOpen(true);
   }
 
-  const onUpdateClick = (event: any, genre: any) => {
-    setGenreToEdit(genre);
+  const onUpdateClick = (event: any, cluster: any) => {
+    setClusterToEdit(cluster);
     setIsDialogAddOrEditOpen(true);
   }
   
-  const onDeleteClick = (event: any, genre: any) => {
-    setGenreIdToDelete(genre.id);
+  const onDeleteClick = (event: any, cluster: any) => {
     setIsDialogDeleteOpen(true);
+    setClusterIdToDelete(cluster.id);
   }
-  
-  const deleteGenre = (id: string) => {
+
+  const deleteCluster = (id: string) => {
     setIsLoadingDelete(true);
-    genreAPI.deleteGenre(id)
+    clusterAPI.deleteCluster(id)
       .then((response) => {
         setIsLoadingDelete(false);
         closeDialogDelete();
-        getAllGenres();
+        getAllClusters();
       })
       .catch((err) => {
         setIsLoadingDelete(false);
-        console.log(err);
+        console.log(err + 'ddm');
       })
   }
-  
+
   const closeDialogDelete = () => {
-    setGenreIdToDelete('');
     setIsDialogDeleteOpen(false);
+    setClusterIdToDelete('');
   }
 
   return (
     <div>
       <MaterialTable
-        title="Genres"
+        title="Clusters"
         isLoading={isTableLoading}
         columns={columns}
-        data={genres}
+        data={clusters}
         options={{
           headerStyle: {
             backgroundColor: '#009be5',
@@ -108,7 +109,7 @@ const PageGenres: FunctionComponent = () => {
           Action: prevProps => {
             if (prevProps.action.icon === 'add') {
               // Override 'add' Action
-              return <Button variant="contained" color="primary" startIcon={<AddIcon />} style={{marginLeft: '20px'}} onClick={() => onAddClick()}>Add Genre</Button>;
+              return <Button variant="contained" color="primary" startIcon={<AddIcon />} style={{marginLeft: '20px'}} onClick={() => onAddClick()}>Add Cluster</Button>;
             }
 
             return <MTableAction {...prevProps} />
@@ -116,36 +117,33 @@ const PageGenres: FunctionComponent = () => {
         }}
       />
 
-      <DialogAddOrEditGenre
-        genreToEdit={genreToEdit}
+      <DialogAddOrEditCluster
+        clusterToEdit={clusterToEdit}
         isOpen={isDialogAddOrEditOpen}
         onClose={() => {
           setIsDialogAddOrEditOpen(false);
 
-          // setTimeout temp fix: transition (animation) doesn't catch up on setGenreToEdit(null)
           // TODO: Fix this
           setTimeout(() => {
-            setGenreToEdit(null);
+            setClusterToEdit(null);
           }, 150);
         }}
         onSave={() => {
           setIsDialogAddOrEditOpen(false);
 
-          // setTimeout temp fix: transition (animation) doesn't catch up on setGenreToEdit(null)
           // TODO: Fix this
           setTimeout(() => {
-            setGenreToEdit(null);
+            setClusterToEdit(null);
           }, 150);
 
-          getAllGenres();
+          getAllClusters();
         }}
       />
 
-      
       <DialogYesNo
         isOpen={isDialogDeleteOpen}
         isLoadingYes={isLoadingDelete}
-        onYes={() => {deleteGenre(genreIdToDelete);}}
+        onYes={() => {deleteCluster(clusterIdToDelete);}}
         onNo={() => {closeDialogDelete();}}
         onClose={() => {closeDialogDelete();}}
       />
@@ -153,4 +151,4 @@ const PageGenres: FunctionComponent = () => {
   );
 }
 
-export default PageGenres;
+export default PageClusters;

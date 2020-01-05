@@ -2,6 +2,7 @@ import React, { useEffect, useState, FunctionComponent } from 'react';
 
 // Misc
 import * as showtimeAPI from '../../../api/showtimeAPI';
+import * as clusterAPI from '../../../api/clusterAPI';
 import * as movieAPI from '../../../api/movieAPI';
 import * as roomAPI from '../../../api/roomAPI';
 import * as screenTypeAPI from '../../../api/screenTypeAPI';
@@ -16,17 +17,22 @@ import { ScreenType } from '../../../interfaces/screenType';
 // Component
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
-import MaterialTable, { Column, MTableAction } from 'material-table';
+import MaterialTable, { Column, MTableAction, MTableToolbar } from 'material-table';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 
 // Custom Component
 import DialogAddOrEditShowtime from './components/DialogAddOrEditShowtime';
 import DialogYesNo from '../../../components/DialogYesNo';
+import { Cluster } from '../../../interfaces/cluster';
 
 // Class
 // import classes from './PageShowtimes.module.scss';
 
 const PageShowtimes: FunctionComponent = () => {
   const [showtimes, setShowtimes] = useState<Array<Showtime>>([]);
+  const [selectedClusterId, setSelectedClusterId] = useState<string>('');
+  const [clusterList, setClusterList] = useState<Array<Cluster>>([]); // Naming convention: use abcList for non-primary array
   const [movieList, setMovieList] = useState<Array<Movie>>([]);
   const [roomList, setRoomList] = useState<Array<Room>>([]);
   const [screenTypeList, setScreenTypeList] = useState<Array<ScreenType>>([]);
@@ -94,21 +100,62 @@ const PageShowtimes: FunctionComponent = () => {
   ]
 
   useEffect(() => {
-    getAllShowtimes();
+    // getAllShowtimes();
+    getClusterList();
     getMovieList();
-    getRoomList();
+    // getRoomList();
     getScreenTypeList();
   }, []);
+  
+  useEffect(() => {
+    if (clusterList.length > 0) {
+      setSelectedClusterId(clusterList[0].id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clusterList]);
 
-  const getAllShowtimes = () => {
+  useEffect(() => {
+    if (selectedClusterId !== '') {
+      getAllShowtimesByClusterId();
+      getRoomListByCluster();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedClusterId]);
+  
+  // const getAllShowtimes = () => {
+  //   setIsTableLoading(true);
+  //   showtimeAPI.getAllShowtimes()
+  //     .then(response => {
+  //       setIsTableLoading(false);
+  //       setShowtimes(response.data);
+  //     })
+  //     .catch(err => {
+  //       setIsTableLoading(false);
+  //       console.log(err);
+  //     })
+  // }
+
+  const getAllShowtimesByClusterId = () => {
     setIsTableLoading(true);
-    showtimeAPI.getAllShowtimes()
+    showtimeAPI.getAllShowtimesByClusterId(selectedClusterId)
       .then(response => {
         setIsTableLoading(false);
         setShowtimes(response.data);
       })
       .catch(err => {
         setIsTableLoading(false);
+        console.log(err);
+      })
+  }
+  
+  const getClusterList = () => {
+    setIsTableLoading(true);
+    clusterAPI.getAllClusters()
+      .then(response => {
+        setIsTableLoading(false);
+        setClusterList(response.data);
+      })
+      .catch(err => {
         console.log(err);
       })
   }
@@ -122,9 +169,9 @@ const PageShowtimes: FunctionComponent = () => {
         console.log(err);
       })
   }
-  
-  const getRoomList = () => {
-    roomAPI.getAllRooms()
+
+  const getRoomListByCluster = () => {
+    roomAPI.getAllRoomsByClusterId(selectedClusterId)
       .then(response => {
         setRoomList(response.data);
       })
@@ -132,6 +179,16 @@ const PageShowtimes: FunctionComponent = () => {
         console.log(err);
       })
   }
+  
+  // const getRoomList = () => {
+  //   roomAPI.getAllRooms()
+  //     .then(response => {
+  //       setRoomList(response.data);
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     })
+  // }
 
   const getScreenTypeList = () => {
     screenTypeAPI.getAllScreenTypes()
@@ -163,7 +220,7 @@ const PageShowtimes: FunctionComponent = () => {
       .then((response) => {
         setIsLoadingDelete(false);
         closeDialogDelete();
-        getAllShowtimes();
+        getAllShowtimesByClusterId();
       })
       .catch((err) => {
         setIsLoadingDelete(false);
@@ -205,12 +262,35 @@ const PageShowtimes: FunctionComponent = () => {
             }
 
             return <MTableAction {...prevProps} />
+          },
+          Toolbar: prevProps => {
+            return (
+              <div>
+                <MTableToolbar {...prevProps} />
+
+                <div style={{display: 'flex', alignItems: 'center', paddingLeft: '24px', marginBottom: '12px'}}>
+                  <div style={{marginRight: '10px', fontWeight: 'bold', fontSize: '16px', color: '#333'}}>Cluster:</div>
+                  <Select
+                    labelId="cluster-select-label"
+                    value={selectedClusterId}
+                    variant="outlined"
+                    onChange={(event: any) => {setSelectedClusterId(event.target.value as string)}}
+                  >
+                    {clusterList.map(cluster => (
+                      <MenuItem key={cluster.id} value={cluster.id}>{cluster.name}</MenuItem>
+                    ))}
+                  </Select>
+                </div>
+              </div>
+            )
           }
         }}
       />
 
       <DialogAddOrEditShowtime
         showtimeToEdit={showtimeToEdit}
+        clusterList={clusterList}
+        selectedClusterId={selectedClusterId}
         movieList={movieList}
         roomList={roomList}
         screenTypeList={screenTypeList}
@@ -233,7 +313,7 @@ const PageShowtimes: FunctionComponent = () => {
             setShowtimeToEdit(null);
           }, 150);
 
-          getAllShowtimes();
+          getAllShowtimesByClusterId();
         }}
       />
 

@@ -1,17 +1,21 @@
 import React, { useEffect, useState, FunctionComponent } from 'react';
 
 // Misc
+import * as clusterAPI from '../../../api/clusterAPI';
 import * as roomAPI from '../../../api/roomAPI';
 import * as screenTypeAPI from '../../../api/screenTypeAPI';
 
 // Interface
+import { Cluster } from '../../../interfaces/cluster';
 import { Room } from '../../../interfaces/room';
 import { ScreenType } from '../../../interfaces/screenType';
 
 // Component
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
-import MaterialTable, { Column, MTableAction } from 'material-table';
+import MaterialTable, { Column, MTableAction, MTableToolbar } from 'material-table';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
 
 // Custom Component
 import DialogAddOrEditRoom from './components/DialogAddOrEditRoom';
@@ -22,7 +26,9 @@ import DialogYesNo from '../../../components/DialogYesNo';
 
 const PageRooms: FunctionComponent = () => {
   const [rooms, setRooms] = useState<Array<Room>>([]);
-  const [screenTypeList, setScreenTypeList] = useState<Array<ScreenType>>([]); // Naming convention: use abcList for non-primary array 
+  const [selectedClusterId, setSelectedClusterId] = useState<string>('');
+  const [clusterList, setClusterList] = useState<Array<Cluster>>([]); // Naming convention: use abcList for non-primary array
+  const [screenTypeList, setScreenTypeList] = useState<Array<ScreenType>>([]);
   const [isTableLoading, setIsTableLoading] = useState(false);
   // Add or edit Dialog
   const [isDialogAddOrEditOpen, setIsDialogAddOrEditOpen] = useState(false);
@@ -48,19 +54,45 @@ const PageRooms: FunctionComponent = () => {
   ]
 
   useEffect(() => {
-    getAllRooms();
+    // getAllRooms();
+    getClusterList();
     getScreenTypeList();
   }, []);
 
-  const getAllRooms = () => {
+  useEffect(() => {
+    if (clusterList.length > 0) {
+      setSelectedClusterId(clusterList[0].id);
+    }
+  }, [clusterList]);
+
+  useEffect(() => {
+    if (selectedClusterId !== '') {
+      getAllRoomsByClusterId();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedClusterId]);
+
+  const getAllRoomsByClusterId = () => {
     setIsTableLoading(true);
-    roomAPI.getAllRooms()
+    roomAPI.getAllRoomsByClusterId(selectedClusterId)
       .then(response => {
         setIsTableLoading(false);
         setRooms(response.data);
       })
       .catch(err => {
         setIsTableLoading(false);
+        console.log(err);
+      })
+  }
+
+  const getClusterList = () => {
+    setIsTableLoading(true);
+    clusterAPI.getAllClusters()
+      .then(response => {
+        setIsTableLoading(false);
+        setClusterList(response.data);
+      })
+      .catch(err => {
         console.log(err);
       })
   }
@@ -95,7 +127,7 @@ const PageRooms: FunctionComponent = () => {
       .then((response) => {
         setIsLoadingDelete(false);
         closeDialogDelete();
-        getAllRooms();
+        getAllRoomsByClusterId();
       })
       .catch((err) => {
         setIsLoadingDelete(false);
@@ -137,6 +169,27 @@ const PageRooms: FunctionComponent = () => {
             }
 
             return <MTableAction {...prevProps} />
+          },
+          Toolbar: prevProps => {
+            return (
+              <div>
+                <MTableToolbar {...prevProps} />
+
+                <div style={{display: 'flex', alignItems: 'center', paddingLeft: '24px', marginBottom: '12px'}}>
+                  <div style={{marginRight: '10px', fontWeight: 'bold', fontSize: '16px', color: '#333'}}>Cluster:</div>
+                  <Select
+                    labelId="cluster-select-label"
+                    value={selectedClusterId}
+                    variant="outlined"
+                    onChange={(event: any) => {setSelectedClusterId(event.target.value as string)}}
+                  >
+                    {clusterList.map(cluster => (
+                      <MenuItem key={cluster.id} value={cluster.id}>{cluster.name}</MenuItem>
+                    ))}
+                  </Select>
+                </div>
+              </div>
+            )
           }
         }}
       />
@@ -144,7 +197,9 @@ const PageRooms: FunctionComponent = () => {
       <DialogAddOrEditRoom
         roomToEdit={roomToEdit}
         isOpen={isDialogAddOrEditOpen}
+        clusterList={clusterList}
         screenTypeList={screenTypeList}
+        selectedClusterId={selectedClusterId}
         onClose={() => {
           setIsDialogAddOrEditOpen(false);
 
@@ -163,7 +218,8 @@ const PageRooms: FunctionComponent = () => {
             setRoomToEdit(null);
           }, 150);
 
-          getAllRooms();
+          // getAllRooms();
+          getAllRoomsByClusterId();
         }}
       />
 
