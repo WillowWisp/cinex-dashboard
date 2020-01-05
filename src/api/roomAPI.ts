@@ -9,6 +9,10 @@ export const getAllRooms = () => {
   return axios.get('/rooms');
 }
 
+export const getAllRoomsByClusterId = (clusterId: string) => {
+  return axios.get(`/rooms?cluster=${clusterId}`);
+}
+
 export const addRoom = (data: RoomInput) => {
   return axios.post('/rooms', data);
 }
