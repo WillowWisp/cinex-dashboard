@@ -12,3 +12,11 @@ export const getAllGenres = () => {
 export const addGenre = (data: GenreInput) => {
   return axios.post('/genres', data);
 }
+
+export const updateGenre = (id: string, data: GenreInput) => {
+  return axios.put(`/genres/${id}`, data);
+}
+
+export const deleteGenre = (id: string) => {
+  return axios.delete(`/genres/${id}`);
+}

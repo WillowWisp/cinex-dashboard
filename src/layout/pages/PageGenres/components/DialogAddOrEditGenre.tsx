@@ -54,9 +54,17 @@ const DialogAddOrEditGenre: FunctionComponent<IDialogAddOrEditGenreProps> = (pro
           console.log(err);
         })
     } else {
-      // Update Genre
-      setIsLoadingSave(false);
-      props.onSave();
+      // Update Room
+      genreAPI.updateGenre(props.genreToEdit.id, genreInput)
+        .then(response => {
+          setIsLoadingSave(false);
+          console.log(response);
+          props.onSave();
+        })
+        .catch(err => {
+          setIsLoadingSave(false);
+          console.log(err);
+        })
     }
   }
 

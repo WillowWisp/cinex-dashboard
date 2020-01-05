@@ -13,6 +13,7 @@ import MaterialTable, { Column, MTableAction } from 'material-table';
 
 // Custom Component
 import DialogAddOrEditGenre from './components/DialogAddOrEditGenre';
+import DialogYesNo from '../../../components/DialogYesNo';
 
 // Class
 // import classes from './PageGenres.module.scss';
@@ -22,6 +23,10 @@ const PageGenres: FunctionComponent = () => {
   const [genreToEdit, setGenreToEdit] = useState<Genre | null>(null);
   const [isTableLoading, setIsTableLoading] = useState(false);
   const [isDialogAddOrEditOpen, setIsDialogAddOrEditOpen] = useState(false);
+  // Delete Dialog
+  const [genreIdToDelete, setGenreIdToDelete] = useState(''); // TODO: Find out if we need to make this a state
+  const [isDialogDeleteOpen, setIsDialogDeleteOpen] = useState(false);
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
   
   const columns: Array<Column<Genre>> = [
     { title: 'Id', field: 'id', editable: 'never', cellStyle: {width: '300px'} },
@@ -54,9 +59,28 @@ const PageGenres: FunctionComponent = () => {
     setIsDialogAddOrEditOpen(true);
   }
   
-  const onDeleteClick = (event: any, genre: Genre | Genre[]) => {
-    console.log('delete');
-    console.log(genre);
+  const onDeleteClick = (event: any, genre: any) => {
+    setGenreIdToDelete(genre.id);
+    setIsDialogDeleteOpen(true);
+  }
+  
+  const deleteGenre = (id: string) => {
+    setIsLoadingDelete(true);
+    genreAPI.deleteGenre(id)
+      .then((response) => {
+        setIsLoadingDelete(false);
+        closeDialogDelete();
+        getAllGenres();
+      })
+      .catch((err) => {
+        setIsLoadingDelete(false);
+        console.log(err);
+      })
+  }
+  
+  const closeDialogDelete = () => {
+    setGenreIdToDelete('');
+    setIsDialogDeleteOpen(false);
   }
 
   return (
@@ -115,6 +139,15 @@ const PageGenres: FunctionComponent = () => {
 
           getAllGenres();
         }}
+      />
+
+      
+      <DialogYesNo
+        isOpen={isDialogDeleteOpen}
+        isLoadingYes={isLoadingDelete}
+        onYes={() => {deleteGenre(genreIdToDelete);}}
+        onNo={() => {closeDialogDelete();}}
+        onClose={() => {closeDialogDelete();}}
       />
     </div>
   );
