@@ -69,6 +69,7 @@ const PageRooms: FunctionComponent = () => {
     if (selectedClusterId !== '') {
       getAllRoomsByClusterId();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedClusterId]);
 
   const getAllRoomsByClusterId = () => {
@@ -170,7 +171,6 @@ const PageRooms: FunctionComponent = () => {
             return <MTableAction {...prevProps} />
           },
           Toolbar: prevProps => {
-            console.log(prevProps);
             return (
               <div>
                 <MTableToolbar {...prevProps} />
@@ -178,7 +178,7 @@ const PageRooms: FunctionComponent = () => {
                 <div style={{display: 'flex', alignItems: 'center', paddingLeft: '24px', marginBottom: '12px'}}>
                   <div style={{marginRight: '10px', fontWeight: 'bold', fontSize: '16px', color: '#333'}}>Cluster:</div>
                   <Select
-                    labelId="rate-select-label"
+                    labelId="cluster-select-label"
                     value={selectedClusterId}
                     variant="outlined"
                     onChange={(event: any) => {setSelectedClusterId(event.target.value as string)}}

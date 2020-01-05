@@ -25,10 +25,13 @@ import FormLabel from '@material-ui/core/FormLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
+import { Cluster } from '../../../../interfaces/cluster';
 
 interface IDialogAddOrEditShowtimeProps {
   showtimeToEdit: Showtime | null, // null: DialogAdd. not null: DialogEdit
   isOpen: boolean,
+  clusterList: Cluster[],
+  selectedClusterId: string,
   movieList: Movie[],
   roomList: Room[],
   screenTypeList: ScreenType[],
@@ -39,8 +42,16 @@ interface IDialogAddOrEditShowtimeProps {
 const DialogAddOrEditShowtime: FunctionComponent<IDialogAddOrEditShowtimeProps> = (props) => {
   const [showtimeInput, setShowtimeInput] = useState<ShowtimeInput>({ movieId: '', price: 10, roomId: '', screenTypeId: '', startAt: moment().add(1, 'hour').startOf('hour').toISOString() });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
-
+  const [selectedCluster, setSelectedCluster] = useState<Cluster | null>(null)
   const [screenTypeAvailableList, setScreenTypeAvailableList] = useState<Array<ScreenType>>([]);
+
+  useEffect(() => {
+    const newSelectedCluster = props.clusterList.find(cluster => cluster.id === props.selectedClusterId);
+    if (newSelectedCluster) {
+      setSelectedCluster(newSelectedCluster);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.selectedClusterId]);
 
   useEffect(() => {
     const newScreenTypeAvailableList = intersectScreenTypes(showtimeInput.movieId, showtimeInput.roomId);
@@ -120,7 +131,10 @@ const DialogAddOrEditShowtime: FunctionComponent<IDialogAddOrEditShowtimeProps> 
 
   return (
     <Dialog open={props.isOpen} onEnter={() => onDialogEnter()} onClose={() => onDialogClose()} fullWidth>
-      <DialogTitle id="form-dialog-title">{!props.showtimeToEdit ? `Add Showtime` : `Edit Showtime: ${moment(props.showtimeToEdit.startAt).format('MMM. D, YYYY [at] h:mm A z')}`}</DialogTitle>
+      <DialogTitle id="form-dialog-title">
+        <div>{selectedCluster?.name}</div>
+        <div>{!props.showtimeToEdit ? `Add Showtime` : `Edit Showtime: ${moment(props.showtimeToEdit.startAt).format('MMM. D, YYYY [at] h:mm A z')}`}</div>
+      </DialogTitle>
       <DialogContent dividers>
         <DialogContentText>
           Please fill those fields below to continue.
