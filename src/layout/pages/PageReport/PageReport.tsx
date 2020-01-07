@@ -187,6 +187,7 @@ const PageReport = () => {
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'center',
+            paddingTop: '16px'
           }}
         >
           <div className='MTableToolbar-title-322'>
@@ -260,7 +261,16 @@ const PageReport = () => {
               {/* <MyChart data={rechartData}/> */}
               { renderChart() }
             </div>
-          : null
+          : <div style={{ 
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              height: '400px',
+              fontSize: '1rem',
+              color: '#666' 
+            }}>
+            Choose Month and click "Get Report" to see Income And Showtimes Report
+          </div>
         }
       </div>
     </div>
