@@ -45,14 +45,15 @@ const categories = [
       { id: 'Showtimes', icon: <IconMovie />, path: '/showtimes', requiredRoles: ['admin', 'staff'] },
       { id: 'Discounts', icon: <IconDiscount />, path: '/discounts', requiredRoles: ['admin'] },
       { id: 'Report', icon: <IconReport />, path: '/report', requiredRoles: ['admin'] },
+      { id: 'Users', icon: <IconPeople />, path: '/users', requiredRoles: ['admin'] },
     ],
   },
-  {
-    id: 'User',
-    children: [
-      { id: 'Roles', icon: <IconPeople />, path: '/users', requiredRoles: ['admin'] },
-    ],
-  },
+  // {
+  //   id: 'User',
+  //   children: [
+  //     { id: 'Roles', icon: <IconPeople />, path: '/users', requiredRoles: ['admin'] },
+  //   ],
+  // },
 ];
 
 const styles = (theme: Theme) =>

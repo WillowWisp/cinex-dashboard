@@ -63,16 +63,16 @@ const TableRoleInfo: FunctionComponent<ITableRoleInfoProps> = (props) => {
   return (
     <div style={{ width: 700 }}>
       <div style={{ display: 'flex', width: '100%', }}>
-        <div style={{ flex: 1, padding: '3px', borderBottom: '2px solid #aaa', borderRight: '2px solid #aaa' }}></div>
+        <div style={{ flex: 1, padding: '3px', borderBottom: '1px solid #ccc', borderRight: '1px solid #ccc' }}></div>
         {
           ROLES.map(role => (
-            <div style={{ flex: 1, padding: '3px', borderBottom: '2px solid #aaa', textAlign: 'center', }}>{role.role.charAt(0).toUpperCase() + role.role.slice(1)}</div>
+            <div style={{ flex: 1, padding: '3px', borderBottom: '1px solid #ccc', textAlign: 'center', }}>{role.role.charAt(0).toUpperCase() + role.role.slice(1)}</div>
           ))
         }
       </div>
       {PERMISSIONS.map(permission => (
         <div style={{ display: 'flex', width: '100%', }}>
-          <div style={{ flex: 1, padding: '2px', borderRight: '2px solid #aaa' }}>Manage {permission.name}</div>
+          <div style={{ flex: 1, padding: '2px', borderRight: '1px solid #ccc' }}>Manage {permission.name}</div>
           {
             ROLES.map(role => (
               <div style={{ flex: 1, padding: '2px', textAlign: 'center', }}>
