@@ -10,6 +10,8 @@ import PageRooms from './layout/pages/PageRoom/PageRoom';
 import PageScreenTypes from './layout/pages/PageScreenTypes/PageScreenTypes';
 import PageShowtimes from './layout/pages/PageShowtimes/PageShowtimes';
 import PageDiscounts from './layout/pages/PageDiscounts/PageDiscounts';
+import PageReport from './layout/pages/PageReport/PageReport';
+import PageTest from './layout/pages/PageTest/PageTest';
 import PageUsers from './layout/pages/PageUsers/PageUsers'
 
 export const routes = [
@@ -64,8 +66,17 @@ export const routes = [
     requiredRoles: ['admin'],
   },
   {
+    path: '/report',
+    component: <PageReport />,
+    requiredRoles: ['admin'],
+  },
+  {
     path: '/users',
     component: <PageUsers />,
     requiredRoles: ['admin'],
+  },
+  {
+    path: '/test',
+    component: <PageTest />,
   },
 ];
