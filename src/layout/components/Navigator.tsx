@@ -13,7 +13,8 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import HomeIcon from '@material-ui/icons/Home';
+import IconApps from '@material-ui/icons/Apps';
+import IconHome from '@material-ui/icons/Home';
 import IconAspectRatio from '@material-ui/icons/AspectRatio';
 import IconList from '@material-ui/icons/List';
 import IconMeetingRoom from '@material-ui/icons/MeetingRoom';
@@ -27,7 +28,7 @@ const categories = [
   {
     id: 'Dashboard',
     children: [
-      { id: 'Home', icon: <IconPeople />, path: '/', requiredRoles: [] }, // temp requiredRoles, will sync to 'route' array later
+      { id: 'Home', icon: <IconHome />, path: '/', requiredRoles: [] }, // temp requiredRoles, will sync to 'route' array later
       { id: 'Login', icon: <IconVpnKey />, path: '/login', requiredRoles: [] },
     ],
   },
@@ -40,16 +41,16 @@ const categories = [
       { id: 'Rates', icon: <IconRate />, path: '/rates', requiredRoles: ['admin'] },
       { id: 'Movies', icon: <IconMovie />, path: '/movies', requiredRoles: ['admin'] },
       { id: 'Rooms', icon: <IconMeetingRoom />, path: '/rooms', requiredRoles: ['admin'] },
-      { id: 'Showtimes', icon: <IconMovie />, path: '/showtimes', requiredRoles: ['admin'] },
+      { id: 'Showtimes', icon: <IconMovie />, path: '/showtimes', requiredRoles: ['admin', 'staff'] },
       { id: 'Discounts', icon: <IconDiscount />, path: '/discounts', requiredRoles: ['admin'] },
     ],
   },
-  // {
-  //   id: 'User',
-  //   children: [
-  //     { id: 'Login', icon: <SettingsIcon />, path: '/login', requiredRoles: [] },
-  //   ],
-  // },
+  {
+    id: 'User',
+    children: [
+      { id: 'Roles', icon: <IconPeople />, path: '/users', requiredRoles: ['admin'] },
+    ],
+  },
 ];
 
 const styles = (theme: Theme) =>
@@ -162,7 +163,7 @@ const Navigator: FunctionComponent<NavigatorProps> = (props) => {
         </ListItem>
         <ListItem className={clsx(classes.item, classes.itemCategory)}>
           <ListItemIcon className={classes.itemIcon}>
-            <HomeIcon />
+            <IconApps />
           </ListItemIcon>
           <ListItemText
             classes={{
