@@ -24,14 +24,14 @@ interface IDialogAddOrEditClusterProps {
 }
 
 const DialogAddOrEditCluster: FunctionComponent<IDialogAddOrEditClusterProps> = (props) => {
-  const [clusterInput, setClusterInput] = useState<ClusterInput>({ name: '', managerId: '' });
+  const [clusterInput, setClusterInput] = useState<ClusterInput>({ name: '', manager: 'cinema-admin', address: '', hotline: '' });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
 
   const onDialogEnter = () => {
     if (!props.clusterToEdit) {
-      setClusterInput({ name: '', managerId: '' });
+      setClusterInput({ name: '', manager: 'cinema-admin', address: '', hotline: '' });
     } else {
-      setClusterInput({ name: props.clusterToEdit.name, managerId: '' });
+      setClusterInput({ name: props.clusterToEdit.name, address: props.clusterToEdit.address, hotline: props.clusterToEdit.hotline, manager: 'cinema-admin' });
     }
   }
 
@@ -87,6 +87,32 @@ const DialogAddOrEditCluster: FunctionComponent<IDialogAddOrEditClusterProps> = 
           variant="outlined"
           value={clusterInput.name}
           onChange={(event) => {setClusterInput({...clusterInput, name: event.target.value })}}
+        />
+        <TextField
+          required
+          id="outlined-full-width"
+          label="Address"
+          style={{ margin: 8 }}
+          placeholder="136 Metropolitan Ave, Brooklyn, NY 11249-3952"
+          fullWidth
+          margin="normal"
+          InputLabelProps={{ shrink: true, }}
+          variant="outlined"
+          value={clusterInput.address}
+          onChange={(event) => {setClusterInput({...clusterInput, address: event.target.value })}}
+        />
+        <TextField
+          required
+          id="outlined-full-width"
+          label="Hotline"
+          style={{ margin: 8 }}
+          placeholder="028 7300 9999"
+          fullWidth
+          margin="normal"
+          InputLabelProps={{ shrink: true, }}
+          variant="outlined"
+          value={clusterInput.hotline}
+          onChange={(event) => {setClusterInput({...clusterInput, hotline: event.target.value })}}
         />
       </DialogContent>
       <DialogActions>
