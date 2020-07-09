@@ -2,10 +2,11 @@ import React, { useState, FunctionComponent } from 'react';
 
 // Misc
 import * as discountAPI from '../../../../api/discountAPI';
+import * as Constants from '../../../../utils/constants';
 import moment from 'moment';
 
 // Interface
-import { Discount, DiscountInput } from '../../../../interfaces/discount';
+import { Discount, DiscountInput, DiscountValidation } from '../../../../interfaces/discount';
 
 // Component
 import MomentUtils from '@date-io/moment';
@@ -29,6 +30,8 @@ interface IDialogAddOrEditDiscountProps {
 const DialogAddOrEditDiscount: FunctionComponent<IDialogAddOrEditDiscountProps> = (props) => {
   const [discountInput, setDiscountInput] = useState<DiscountInput>({ name: '', discount: 0, expire: moment().add(1, 'hour').startOf('hour').toISOString() });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
+  const [errors, setErrors] = useState<DiscountValidation>({ name: '', discount: '' });
+  const [requestError, setRequestError] = useState('');
 
   const onDialogEnter = () => {
     if (!props.discountToEdit) {
@@ -40,38 +43,60 @@ const DialogAddOrEditDiscount: FunctionComponent<IDialogAddOrEditDiscountProps> 
         expire: props.discountToEdit.expire,
       });
     }
+    setErrors({ name: '', discount: '' });
+	  setRequestError('');
   }
 
   const onDialogClose = () => {
     props.onClose();
   }
 
+  const validateInput = () : boolean => {
+    let validationResult: DiscountValidation = { name: '', discount: '' };
+    let isOK = true;
+    if (discountInput.name.length === 0) {
+      validationResult.name = Constants.ERROR_MSG_FIELD_REQUIRED;
+      isOK = false;
+    }
+    if (discountInput.discount <= 0) {
+      validationResult.discount = Constants.ERROR_MSG_FIELD_NOT_POSITIVE_NUMBER;
+      isOK = false;
+    }
+    setErrors({ ...validationResult });
+    return isOK;
+  }
+
   const onDialogSave = () => {
-    setIsLoadingSave(true);
-    if (!props.discountToEdit) {
-      // Add
-      discountAPI.addDiscount(discountInput)
-        .then(response => {
-          setIsLoadingSave(false);
-          console.log(response);
-          props.onSave();
-        })
-        .catch(err => {
-          setIsLoadingSave(false);
-          console.log(err);
-        })
-    } else {
-      // Update
-      discountAPI.updateDiscount(props.discountToEdit.id, discountInput)
-        .then(response => {
-          setIsLoadingSave(false);
-          console.log(response);
-          props.onSave();
-        })
-        .catch(err => {
-          setIsLoadingSave(false);
-          console.log(err);
-        })
+    const isOK = validateInput();
+    if (isOK) {
+      setIsLoadingSave(true);
+      if (!props.discountToEdit) {
+        // Add
+        discountAPI.addDiscount(discountInput)
+          .then(response => {
+            setIsLoadingSave(false);
+            console.log(response);
+            props.onSave();
+          })
+          .catch(err => {
+            setIsLoadingSave(false);
+            setRequestError(err.toString());
+            console.log(err);
+          })
+      } else {
+        // Update
+        discountAPI.updateDiscount(props.discountToEdit.id, discountInput)
+          .then(response => {
+            setIsLoadingSave(false);
+            console.log(response);
+            props.onSave();
+          })
+          .catch(err => {
+            setIsLoadingSave(false);
+            setRequestError(err.toString());
+            console.log(err);
+          })
+      }
     }
   }
 
@@ -79,13 +104,21 @@ const DialogAddOrEditDiscount: FunctionComponent<IDialogAddOrEditDiscountProps> 
     <Dialog open={props.isOpen} onEnter={() => onDialogEnter()} onClose={() => onDialogClose()}>
       <DialogTitle id="form-dialog-title">{!props.discountToEdit ? `Add Discount` : `Edit Discount: ${props.discountToEdit.name}`}</DialogTitle>
       <DialogContent dividers>
-        <DialogContentText>
-          Please fill those fields below to continue.
-        </DialogContentText>
+        {
+          requestError.length > 0
+          ? (	<DialogContentText style={{ color: "red" }}>
+              {requestError}
+              </DialogContentText>)
+          : (	<DialogContentText>
+              Please fill those fields below to continue.
+            </DialogContentText>)
+        }
         <TextField
+          error={errors.name.length > 0}
+          helperText={errors.name}
           required
           id="outlined-full-width"
-          label="Discount code (4-6 digits)"
+          label="Discount code"
           style={{ margin: 8 }}
           placeholder="DIS001"
           fullWidth
@@ -96,6 +129,8 @@ const DialogAddOrEditDiscount: FunctionComponent<IDialogAddOrEditDiscountProps> 
           onChange={(event) => {setDiscountInput({...discountInput, name: event.target.value })}}
         />
         <TextField
+          error={errors.discount.length > 0}
+          helperText={errors.discount}
           required
           id="outlined-full-width"
           label="Discount Percent (%)"

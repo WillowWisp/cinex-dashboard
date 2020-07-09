@@ -2,9 +2,10 @@ import React, { useState, FunctionComponent } from 'react';
 
 // Misc
 import * as clusterAPI from '../../../../api/clusterAPI';
+import * as Constants from '../../../../utils/constants';
 
 // Interface
-import { Cluster, ClusterInput } from '../../../../interfaces/cluster';
+import { Cluster, ClusterInput, ClusterValidation } from '../../../../interfaces/cluster';
 
 // Component
 import Button from '@material-ui/core/Button';
@@ -26,6 +27,8 @@ interface IDialogAddOrEditClusterProps {
 const DialogAddOrEditCluster: FunctionComponent<IDialogAddOrEditClusterProps> = (props) => {
   const [clusterInput, setClusterInput] = useState<ClusterInput>({ name: '', manager: 'cinema-admin', address: '', hotline: '' });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
+  const [errors, setErrors] = useState<ClusterValidation>({ name: '', address: '', hotline: '' });
+  const [requestError, setRequestError] = useState('');
 
   const onDialogEnter = () => {
     if (!props.clusterToEdit) {
@@ -33,38 +36,64 @@ const DialogAddOrEditCluster: FunctionComponent<IDialogAddOrEditClusterProps> = 
     } else {
       setClusterInput({ name: props.clusterToEdit.name, address: props.clusterToEdit.address, hotline: props.clusterToEdit.hotline, manager: 'cinema-admin' });
     }
+    setErrors({ name: '', address: '', hotline: '' });
+	  setRequestError('');
   }
 
   const onDialogClose = () => {
     props.onClose();
   }
 
+  const validateInput = () : boolean => {
+    let validationResult: ClusterValidation = { name: '', address: '', hotline: '' };
+    let isOK = true;
+    if (clusterInput.name.length === 0) {
+      validationResult.name = Constants.ERROR_MSG_FIELD_REQUIRED;
+      isOK = false;
+    }
+    if (clusterInput.address.length === 0) {
+      validationResult.address = Constants.ERROR_MSG_FIELD_REQUIRED;
+      isOK = false;
+    }
+    if (clusterInput.hotline.length === 0) {
+      validationResult.hotline = Constants.ERROR_MSG_FIELD_REQUIRED;
+      isOK = false;
+    }
+    setErrors({ ...validationResult });
+    return isOK;
+  }
+
   const onDialogSave = () => {
-    setIsLoadingSave(true);
-    if (!props.clusterToEdit) {
-      // Add
-      clusterAPI.addCluster(clusterInput)
-        .then(response => {
-          setIsLoadingSave(false);
-          console.log(response);
-          props.onSave();
-        })
-        .catch(err => {
-          setIsLoadingSave(false);
-          console.log(err);
-        })
-    } else {
-      // Update
-      clusterAPI.updateCluster(props.clusterToEdit.id, clusterInput)
-        .then(response => {
-          setIsLoadingSave(false);
-          console.log(response);
-          props.onSave();
-        })
-        .catch(err => {
-          setIsLoadingSave(false);
-          console.log(err);
-        })
+    const isOK = validateInput();
+    if (isOK) {
+      setIsLoadingSave(true);
+      if (!props.clusterToEdit) {
+        // Add
+        clusterAPI.addCluster(clusterInput)
+          .then(response => {
+            setIsLoadingSave(false);
+            console.log(response);
+            props.onSave();
+          })
+          .catch(err => {
+            setIsLoadingSave(false);
+            setRequestError(err.toString());
+            console.log(err);
+          })
+      } else {
+        // Update
+        clusterAPI.updateCluster(props.clusterToEdit.id, clusterInput)
+          .then(response => {
+            setIsLoadingSave(false);
+            console.log(response);
+            props.onSave();
+          })
+          .catch(err => {
+            setIsLoadingSave(false);
+            setRequestError(err.toString());
+            console.log(err);
+          })
+      }
     }
   }
 
@@ -72,10 +101,18 @@ const DialogAddOrEditCluster: FunctionComponent<IDialogAddOrEditClusterProps> = 
     <Dialog open={props.isOpen} onEnter={() => onDialogEnter()} onClose={() => onDialogClose()}>
       <DialogTitle id="form-dialog-title">{!props.clusterToEdit ? `Add Cluster` : `Edit Cluster: ${props.clusterToEdit.name}`}</DialogTitle>
       <DialogContent dividers>
-        <DialogContentText>
-          Please fill those fields below to continue.
-        </DialogContentText>
+        {
+          requestError.length > 0
+          ? (	<DialogContentText style={{ color: "red" }}>
+              {requestError}
+              </DialogContentText>)
+          : (	<DialogContentText>
+              Please fill those fields below to continue.
+            </DialogContentText>)
+        }
         <TextField
+          error={errors.name.length > 0}
+          helperText={errors.name}
           required
           id="outlined-full-width"
           label="Cluster name"
@@ -89,6 +126,8 @@ const DialogAddOrEditCluster: FunctionComponent<IDialogAddOrEditClusterProps> = 
           onChange={(event) => {setClusterInput({...clusterInput, name: event.target.value })}}
         />
         <TextField
+          error={errors.address.length > 0}
+          helperText={errors.address}
           required
           id="outlined-full-width"
           label="Address"
@@ -102,6 +141,8 @@ const DialogAddOrEditCluster: FunctionComponent<IDialogAddOrEditClusterProps> = 
           onChange={(event) => {setClusterInput({...clusterInput, address: event.target.value })}}
         />
         <TextField
+          error={errors.hotline.length > 0}
+          helperText={errors.hotline}
           required
           id="outlined-full-width"
           label="Hotline"

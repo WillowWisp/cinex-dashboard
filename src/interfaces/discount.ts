@@ -11,3 +11,8 @@ export interface DiscountInput {
   discount: number,
   expire: string,
 }
+
+export interface DiscountValidation {
+	name: string,
+	discount: string,
+}

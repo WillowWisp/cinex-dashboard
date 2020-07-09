@@ -32,6 +32,11 @@ export interface MovieInsertInput {
   screenTypeIds: string[],
 }
 
+export interface MovieInsertValidation {
+	imdbID: string,
+  screenTypes: string,
+}
+
 export interface MovieUpdateInput {
   title: string,
   storyline: string, //
@@ -43,4 +48,9 @@ export interface MovieUpdateInput {
   wallpapers: string[], //
   rateId: string,
   screenTypeIds: string[],
+}
+
+export interface MovieUpdateValidation {
+	title: string,
+	screenTypes: string,
 }

@@ -2,9 +2,10 @@ import React, { useState, FunctionComponent } from 'react';
 
 // Misc
 import * as genreAPI from '../../../../api/genreAPI';
+import * as Constants from '../../../../utils/constants';
 
 // Interface
-import { Genre, GenreInput } from '../../../../interfaces/genre';
+import { Genre, GenreInput, GenreValidation } from '../../../../interfaces/genre';
 
 // Component
 import Button from '@material-ui/core/Button';
@@ -26,6 +27,8 @@ interface IDialogAddOrEditGenreProps {
 const DialogAddOrEditGenre: FunctionComponent<IDialogAddOrEditGenreProps> = (props) => {
   const [genreInput, setGenreInput] = useState<GenreInput>({ name: '' });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
+  const [errors, setErrors] = useState<GenreValidation>({ name: '' });
+  const [requestError, setRequestError] = useState('');
 
   const onDialogEnter = () => {
     if (!props.genreToEdit) {
@@ -33,38 +36,56 @@ const DialogAddOrEditGenre: FunctionComponent<IDialogAddOrEditGenreProps> = (pro
     } else {
       setGenreInput({ name: props.genreToEdit.name });
     }
+    setErrors({ name: '' });
+	  setRequestError('');
   }
 
   const onDialogClose = () => {
     props.onClose();
   }
 
+  const validateInput = () : boolean => {
+	  let validationResult: GenreValidation = { name: '' };
+	  let isOK = true;
+	  if (genreInput.name.length === 0) {
+		  validationResult.name = Constants.ERROR_MSG_FIELD_REQUIRED;
+		  isOK = false;
+	  }
+	  setErrors({ ...validationResult });
+	  return isOK;
+  }
+
   const onDialogSave = () => {
-    setIsLoadingSave(true);
-    if (!props.genreToEdit) {
-      // Add Genre
-      genreAPI.addGenre(genreInput)
-        .then(response => {
-          setIsLoadingSave(false);
-          console.log(response);
-          props.onSave();
-        })
-        .catch(err => {
-          setIsLoadingSave(false);
-          console.log(err);
-        })
-    } else {
-      // Update Room
-      genreAPI.updateGenre(props.genreToEdit.id, genreInput)
-        .then(response => {
-          setIsLoadingSave(false);
-          console.log(response);
-          props.onSave();
-        })
-        .catch(err => {
-          setIsLoadingSave(false);
-          console.log(err);
-        })
+    const isOK = validateInput();
+    if (isOK) {
+      setIsLoadingSave(true);
+      if (!props.genreToEdit) {
+        // Add Genre
+        genreAPI.addGenre(genreInput)
+          .then(response => {
+            setIsLoadingSave(false);
+            console.log(response);
+            props.onSave();
+          })
+          .catch(err => {
+            setIsLoadingSave(false);
+			      setRequestError(err.toString());
+            console.log(err);
+          })
+      } else {
+        // Update Room
+        genreAPI.updateGenre(props.genreToEdit.id, genreInput)
+          .then(response => {
+            setIsLoadingSave(false);
+            console.log(response);
+            props.onSave();
+          })
+          .catch(err => {
+            setIsLoadingSave(false);
+			      setRequestError(err.toString());
+            console.log(err);
+          })
+      }
     }
   }
 
@@ -72,10 +93,18 @@ const DialogAddOrEditGenre: FunctionComponent<IDialogAddOrEditGenreProps> = (pro
     <Dialog open={props.isOpen} onEnter={() => onDialogEnter()} onClose={() => onDialogClose()}>
       <DialogTitle id="form-dialog-title">{!props.genreToEdit ? `Add Genre` : `Edit Genre: ${props.genreToEdit.name}`}</DialogTitle>
       <DialogContent dividers>
-        <DialogContentText>
-          Please fill those fields below to continue.
-        </DialogContentText>
+        {
+          requestError.length > 0
+          ? (	<DialogContentText style={{ color: "red" }}>
+              {requestError}
+              </DialogContentText>)
+          : (	<DialogContentText>
+              Please fill those fields below to continue.
+            </DialogContentText>)
+        }
         <TextField
+          error={errors.name.length > 0}
+          helperText={errors.name}
           required
           id="outlined-full-width"
           label="Genre name"

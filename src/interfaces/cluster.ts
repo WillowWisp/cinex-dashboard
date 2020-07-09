@@ -12,3 +12,9 @@ export interface ClusterInput {
   address: string,
   hotline: string,
 }
+
+export interface ClusterValidation {
+	name: string,
+  address: string,
+  hotline: string,
+}

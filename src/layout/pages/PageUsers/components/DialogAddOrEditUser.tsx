@@ -87,7 +87,7 @@ const DialogAddOrEditUser: FunctionComponent<IDialogAddOrEditUserProps> = (props
           fieldValue="id"
           fieldLabel="role"
           selectedValues={userInput.roleIds}
-          onChange={(newSelectedValues: any) => { setUserInput({ ...userInput, roleIds: [...userInput.roleIds, ...newSelectedValues] }) }}
+          onChange={(newSelectedValues: any) => { setUserInput({ ...userInput, roleIds: [...newSelectedValues] }) }}
         />
       </DialogContent>
       <DialogActions>

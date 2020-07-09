@@ -3,9 +3,10 @@ import React, { useState, FunctionComponent } from 'react';
 // Misc
 import * as movieAPI from '../../../../api/movieAPI';
 import moment from 'moment';
+import * as Constants from '../../../../utils/constants';
 
 // Interface
-import { Movie, MovieUpdateInput } from '../../../../interfaces/movie';
+import { Movie, MovieUpdateInput, MovieUpdateValidation } from '../../../../interfaces/movie';
 import { Rate } from '../../../../interfaces/rate';
 import { ScreenType } from '../../../../interfaces/screenType';
 
@@ -43,6 +44,8 @@ interface IDialogAddMovieProps {
 const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
   const [movieInput, setMovieInput] = useState<MovieUpdateInput>({ title: '', storyline: '', actors: [], released: '', endAt: moment().add(1, 'hour').startOf('hour').toISOString(), poster: '', trailer: '', wallpapers: [''], rateId: '', screenTypeIds: [], });
   const [isLoadingSave, setIsLoadingSave] = useState(false);
+  const [errors, setErrors] = useState<MovieUpdateValidation>({ title: '', screenTypes: '' });
+  const [requestError, setRequestError] = useState('');
 
   const onDialogEnter = () => {
     if (props.movieToEdit) {
@@ -59,32 +62,53 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
         screenTypeIds: props.movieToEdit.screenTypes.map(screenType => screenType.id),
       });
     }
+    setErrors({ title: '', screenTypes: '' });
+	  setRequestError('');
   }
 
   const onDialogClose = () => {
     props.onClose();
   }
 
+  const validateInput = () : boolean => {
+    let validationResult: MovieUpdateValidation = { title: '', screenTypes: '' };
+    let isOK = true;
+    if (movieInput.title.length === 0) {
+      validationResult.title = Constants.ERROR_MSG_FIELD_REQUIRED;
+      isOK = false;
+    }
+    if (!(movieInput.screenTypeIds.length > 0)) {
+      validationResult.screenTypes = Constants.ERROR_MSG_FIELD_REQUIRED;
+      isOK = false;
+    }
+    setErrors({ ...validationResult });
+    return isOK;
+  }
+
   const onDialogSave = () => {
-    setIsLoadingSave(true);
-    if (props.movieToEdit) {
-      movieAPI.updateMovie(props.movieToEdit.id, movieInput)
-        .then(response => {
-          setIsLoadingSave(false);
-          console.log(response);
-          props.onSave();
-        })
-        .catch(err => {
-          setIsLoadingSave(false);
-          console.log(err);
-        });
+    const isOK = validateInput();
+    if (isOK) {
+      setIsLoadingSave(true);
+      if (props.movieToEdit) {
+        movieAPI.updateMovie(props.movieToEdit.id, movieInput)
+          .then(response => {
+            setIsLoadingSave(false);
+            console.log(response);
+            props.onSave();
+          })
+          .catch(err => {
+            setIsLoadingSave(false);
+				    setRequestError(err.toString());
+            console.log(err);
+          });
+      }
     }
   }
 
   const renderScreenTypeCheckboxes = () => {
     return (
       <FormGroup style={{marginLeft: 10, marginBottom: 20,}}>
-        <FormLabel>Screen types:</FormLabel>
+        <FormLabel style={{ color: errors.screenTypes.length > 0 ? "red" : "rgba(0, 0, 0, 0.54)" }}>Screen types:</FormLabel>
         <div style={{display: 'flex',}}>
           <CheckboxGroup
             options={props.screenTypeList}
@@ -94,6 +118,10 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
             onChange={(newSelectedValues: any) => { setMovieInput({ ...movieInput, screenTypeIds: newSelectedValues }) }}
           />
         </div>
+        {
+          errors.screenTypes.length > 0 &&
+          <div style={{ color: "red", fontSize: "0.75rem", fontWeight: 400 }}>{errors.screenTypes}</div>
+        }
       </FormGroup>
     )
   }
@@ -102,12 +130,20 @@ const DialogAddMovie: FunctionComponent<IDialogAddMovieProps> = (props) => {
     <Dialog open={props.isOpen} onEnter={() => onDialogEnter()} onClose={() => onDialogClose()} fullWidth maxWidth="md">
       <DialogTitle id="form-dialog-title">Edit Movie: {props.movieToEdit?.title}</DialogTitle>
       <DialogContent dividers>
-        <DialogContentText>
-          Please fill those fields below to continue.
-        </DialogContentText>
+        {
+          requestError.length > 0
+          ? (	<DialogContentText style={{ color: "red" }}>
+              {requestError}
+              </DialogContentText>)
+          : (	<DialogContentText>
+              Please fill those fields below to continue.
+            </DialogContentText>)
+        }
         <Grid container spacing={3}>
           <Grid item xs={8}>
             <TextField
+              error={errors.title.length > 0}
+              helperText={errors.title}
               required
               label="Movie title"
               style={{ margin: 10, marginBottom: 20, }}

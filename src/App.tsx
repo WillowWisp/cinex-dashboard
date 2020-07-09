@@ -11,7 +11,7 @@ import Layout from './layout/Layout';
 import './App.css';
 import './styles/global.scss';
 
-axios.defaults.baseURL = 'https://cinex.herokuapp.com';
+axios.defaults.baseURL = 'http://localhost:8585';
 
 const App: React.FC = () => {
   const [authContext, setAuthContext] = useState({ roles: [] as Array<string>, username: '', token: '' });
